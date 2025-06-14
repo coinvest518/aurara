@@ -31,14 +31,16 @@ class TavusService {
     const response = await fetch(url, {
       ...options,
       headers: {
-        'Authorization': `Bearer ${this.apiKey}`,
+        'x-api-key': this.apiKey,
         'Content-Type': 'application/json',
         ...options.headers,
       },
     });
 
     if (!response.ok) {
-      throw new Error(`Tavus API error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      console.error(`Tavus API error: ${response.status} ${response.statusText}`, errorText);
+      throw new Error(`Tavus API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     return response.json();
@@ -89,8 +91,13 @@ class TavusService {
 
   async getPersonas(): Promise<TavusPersona[]> {
     try {
+      console.log('Fetching personas from Tavus API...');
       const response = await this.makeRequest('/personas');
-      return response.data || response;
+      console.log('Tavus personas response:', response);
+      
+      // Handle both array and object with data property
+      const personas = Array.isArray(response) ? response : response.data;
+      return personas || [];
     } catch (error) {
       console.error('Failed to fetch personas from API:', error);
       // Return your specific persona as fallback
