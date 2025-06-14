@@ -92,19 +92,56 @@ class TavusService {
   async getPersonas(): Promise<TavusPersona[]> {
     try {
       console.log('Fetching personas from Tavus API...');
-      const response = await this.makeRequest('/personas');
-      console.log('Tavus personas response:', response);
       
-      // Handle both array and object with data property
-      const personas = Array.isArray(response) ? response : response.data;
-      return personas || [];
+      // Try to get all personas with pagination
+      let allPersonas: TavusPersona[] = [];
+      let page = 1;
+      let hasMore = true;
+      
+      while (hasMore) {
+        const response = await this.makeRequest(`/personas?page=${page}&limit=50`);
+        console.log(`Tavus personas response (page ${page}):`, response);
+        
+        const personas = Array.isArray(response) ? response : response.data;
+        if (personas && personas.length > 0) {
+          allPersonas = allPersonas.concat(personas);
+          
+          // Check if there are more pages
+          if (response.total_count && allPersonas.length < response.total_count) {
+            page++;
+          } else {
+            hasMore = false;
+          }
+        } else {
+          hasMore = false;
+        }
+      }
+      
+      // Check if your specific Empathy persona is in the results
+      const empathyPersona = allPersonas.find(p => p.persona_id === 'pde7ef583431');
+      
+      // If not found, add it manually
+      if (!empathyPersona) {
+        console.log('Empathy persona not found in API response, adding manually');
+        allPersonas.unshift({
+          persona_id: 'pde7ef583431',
+          persona_name: 'Empathy',
+          system_prompt: 'You are Empathy, a versatile AI companion acting as both a trusted friend and a professional psychologist...',
+          default_replica_id: 'r9d30b0e55ac',
+          context: 'Empathy persona for meaningful conversations'
+        });
+      }
+      
+      console.log(`Total personas loaded: ${allPersonas.length}`);
+      return allPersonas;
+      
     } catch (error) {
       console.error('Failed to fetch personas from API:', error);
       // Return your specific persona as fallback
       return [{
         persona_id: 'pde7ef583431',
         persona_name: 'Empathy',
-        system_prompt: 'You are an empathetic AI assistant.',
+        system_prompt: 'You are Empathy, a versatile AI companion acting as both a trusted friend and a professional psychologist...',
         default_replica_id: 'r9d30b0e55ac',
         context: 'Empathy persona for meaningful conversations'
       }];

@@ -37,7 +37,7 @@ export const TavusProvider: React.FC<TavusProviderProps> = ({ children }) => {
   const [conversationState, setConversationState] = useState<'idle' | 'connecting' | 'active' | 'paused' | 'ended' | 'error'>('idle');
   const [conversationDuration, setConversationDuration] = useState(0);
   const [turnCount, setTurnCount] = useState(0);
-  const [currentPersona, setCurrentPersona] = useState('pde7ef583431');
+  const [currentPersona, setCurrentPersona] = useState('pde7ef583431'); // Default to Empathy persona
   const [availablePersonas, setAvailablePersonas] = useState<TavusPersona[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
   const [conversationUrl, setConversationUrl] = useState<string | null>(null);
@@ -60,9 +60,12 @@ export const TavusProvider: React.FC<TavusProviderProps> = ({ children }) => {
       const personas = await tavusService.getPersonas();
       setAvailablePersonas(personas);
       
-      // Set default persona if available
-      if (personas.length > 0) {
-        setCurrentPersona(personas[0].id);
+      // Set Empathy persona as default, or first available if not found
+      const empathyPersona = personas.find(p => p.persona_id === 'pde7ef583431');
+      if (empathyPersona) {
+        setCurrentPersona('pde7ef583431');
+      } else if (personas.length > 0) {
+        setCurrentPersona(personas[0].persona_id);
       }
     } catch (error) {
       console.error('Failed to load personas:', error);
