@@ -1,40 +1,36 @@
-// API Configuration
+
 export const API_CONFIG = {
   tavus: {
-    apiKey: import.meta.env.VITE_TAVUS_API_KEY,
-    baseUrl: import.meta.env.VITE_TAVUS_API_URL || 'https://tavusapi.com/api',
+    apiKey: import.meta.env.VITE_TAVUS_API_KEY || '',
+    baseUrl: 'https://tavusapi.com/v2',
     endpoints: {
-      conversations: '/v1/conversations',
-      personas: '/v1/personas',
-      replicas: '/v1/replicas',
+      conversations: '/conversations',
+      personas: '/personas',
+      replicas: '/replicas'
     }
   },
   daily: {
-    apiKey: import.meta.env.VITE_DAILY_API_KEY,
-    baseUrl: import.meta.env.VITE_DAILY_API_URL || 'https://api.daily.co/v1',
+    apiKey: import.meta.env.VITE_DAILY_API_KEY || '',
+    baseUrl: 'https://api.daily.co/v1',
     endpoints: {
-      rooms: '/rooms',
-      meetings: '/meetings',
+      rooms: '/rooms'
     }
   }
 };
 
-// Validate API keys on startup
-export const validateApiKeys = () => {
-  const missingKeys = [];
+export const getApiConfig = () => {
+  const tavusConfigured = !!API_CONFIG.tavus.apiKey;
+  const dailyConfigured = !!API_CONFIG.daily.apiKey;
   
-  if (!API_CONFIG.tavus.apiKey) {
-    missingKeys.push('VITE_TAVUS_API_KEY');
-  }
-  
-  if (!API_CONFIG.daily.apiKey) {
-    missingKeys.push('VITE_DAILY_API_KEY');
-  }
-  
-  if (missingKeys.length > 0) {
-    console.warn('Missing API keys:', missingKeys);
-    return false;
-  }
-  
-  return true;
+  return {
+    tavus: {
+      ...API_CONFIG.tavus,
+      isConfigured: tavusConfigured
+    },
+    daily: {
+      ...API_CONFIG.daily,
+      isConfigured: dailyConfigured
+    },
+    allConfigured: tavusConfigured && dailyConfigured
+  };
 };
