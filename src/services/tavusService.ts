@@ -91,49 +91,47 @@ class TavusService {
 
   async getPersonas(): Promise<TavusPersona[]> {
     try {
-      console.log('Fetching personas from Tavus API...');
+      console.log('Fetching Empathy persona from Tavus API...');
       
-      // Try to get all personas with pagination
-      let allPersonas: TavusPersona[] = [];
-      let page = 1;
-      let hasMore = true;
-      
-      while (hasMore) {
-        const response = await this.makeRequest(`/personas?page=${page}&limit=50`);
-        console.log(`Tavus personas response (page ${page}):`, response);
+      // First, try to get the specific Empathy persona directly
+      try {
+        const empathyResponse = await this.makeRequest('/personas/pde7ef583431');
+        console.log('Empathy persona response:', empathyResponse);
         
-        const personas = Array.isArray(response) ? response : response.data;
-        if (personas && personas.length > 0) {
-          allPersonas = allPersonas.concat(personas);
-          
-          // Check if there are more pages
-          if (response.total_count && allPersonas.length < response.total_count) {
-            page++;
-          } else {
-            hasMore = false;
-          }
-        } else {
-          hasMore = false;
+        const empathyPersona = empathyResponse.data || empathyResponse;
+        if (empathyPersona && empathyPersona.persona_id) {
+          console.log('Successfully loaded Empathy persona');
+          return [empathyPersona];
         }
+      } catch (empathyError) {
+        console.log('Could not fetch Empathy persona directly, trying list endpoint:', empathyError);
       }
       
-      // Check if your specific Empathy persona is in the results
-      const empathyPersona = allPersonas.find(p => p.persona_id === 'pde7ef583431');
+      // Fallback: Get list of personas and look for Empathy
+      console.log('Fetching personas list from Tavus API...');
+      const response = await this.makeRequest('/personas');
+      console.log('Tavus personas list response:', response);
       
-      // If not found, add it manually
-      if (!empathyPersona) {
-        console.log('Empathy persona not found in API response, adding manually');
-        allPersonas.unshift({
+      const personas = Array.isArray(response) ? response : response.data;
+      if (personas && personas.length > 0) {
+        // Check if Empathy persona is in the list
+        const empathyPersona = personas.find(p => p.persona_id === 'pde7ef583431');
+        if (empathyPersona) {
+          // Put Empathy first in the list
+          return [empathyPersona, ...personas.filter(p => p.persona_id !== 'pde7ef583431')];
+        }
+        // Return all personas with manual Empathy persona at the top
+        return [{
           persona_id: 'pde7ef583431',
           persona_name: 'Empathy',
           system_prompt: 'You are Empathy, a versatile AI companion acting as both a trusted friend and a professional psychologist...',
           default_replica_id: 'r9d30b0e55ac',
           context: 'Empathy persona for meaningful conversations'
-        });
+        }, ...personas];
       }
       
-      console.log(`Total personas loaded: ${allPersonas.length}`);
-      return allPersonas;
+      // If no personas found, return just the Empathy persona
+      throw new Error('No personas found in API response');
       
     } catch (error) {
       console.error('Failed to fetch personas from API:', error);
