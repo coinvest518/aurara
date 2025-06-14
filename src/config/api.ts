@@ -34,3 +34,22 @@ export const getApiConfig = () => {
     allConfigured: tavusConfigured && dailyConfigured
   };
 };
+
+export const validateApiKeys = () => {
+  const missingKeys = [];
+  
+  if (!API_CONFIG.tavus.apiKey) {
+    missingKeys.push('VITE_TAVUS_API_KEY');
+  }
+  
+  if (!API_CONFIG.daily.apiKey) {
+    missingKeys.push('VITE_DAILY_API_KEY');
+  }
+  
+  if (missingKeys.length > 0) {
+    console.warn('Missing API keys:', missingKeys);
+    return false;
+  }
+  
+  return true;
+};
