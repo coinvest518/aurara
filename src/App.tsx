@@ -204,16 +204,16 @@ const MainApp: React.FC = () => {
                 <div className="space-y-2">
                   {tavus.availablePersonas.map((persona) => (
                     <button
-                      key={persona.id}
-                      onClick={() => tavus.setPersona(persona.id)}
+                      key={persona.persona_id}
+                      onClick={() => tavus.setPersona(persona.persona_id)}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
-                        tavus.currentPersona === persona.id
+                        tavus.currentPersona === persona.persona_id
                           ? 'bg-blue-100 text-blue-800 font-medium'
                           : 'hover:bg-slate-100 text-slate-600'
                       }`}
                     >
-                      <div className="font-medium">{persona.name}</div>
-                      <div className="text-xs opacity-75">{persona.description}</div>
+                      <div className="font-medium">{persona.persona_name}</div>
+                      <div className="text-xs opacity-75">{persona.context || 'AI Persona'}</div>
                     </button>
                   ))}
                 </div>
