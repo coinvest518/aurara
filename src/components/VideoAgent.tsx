@@ -5,6 +5,7 @@ interface VideoAgentProps {
   isConnected: boolean;
   isVideoEnabled: boolean;
   isAudioEnabled: boolean;
+  conversationUrl?: string;
   onVideoToggle: () => void;
   onAudioToggle: () => void;
   onEndCall: () => void;
@@ -15,6 +16,7 @@ export const VideoAgent: React.FC<VideoAgentProps> = ({
   isConnected,
   isVideoEnabled,
   isAudioEnabled,
+  conversationUrl,
   onVideoToggle,
   onAudioToggle,
   onEndCall,
@@ -42,13 +44,12 @@ export const VideoAgent: React.FC<VideoAgentProps> = ({
     }`}>
       {/* AI Agent Video Display */}
       <div className="relative w-full h-full">
-        {isConnected && isVideoEnabled ? (
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover"
-            autoPlay
-            playsInline
-            muted={false}
+        {isConnected && isVideoEnabled && conversationUrl ? (
+          <iframe
+            src={conversationUrl}
+            className="w-full h-full border-0"
+            allow="camera; microphone; fullscreen; display-capture; autoplay"
+            style={{ borderRadius: '1rem' }}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">

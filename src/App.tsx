@@ -158,6 +158,7 @@ const MainApp: React.FC = () => {
                 isConnected={webrtc.isConnected}
                 isVideoEnabled={webrtc.isVideoEnabled}
                 isAudioEnabled={webrtc.isAudioEnabled}
+                conversationUrl={tavus.conversationUrl}
                 onVideoToggle={webrtc.toggleVideo}
                 onAudioToggle={webrtc.toggleAudio}
                 onEndCall={handleEndConversation}

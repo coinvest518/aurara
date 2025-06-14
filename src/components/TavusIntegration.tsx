@@ -9,6 +9,7 @@ interface TavusContextType {
   currentPersona: string;
   availablePersonas: TavusPersona[];
   currentConversationId: string | null;
+  conversationUrl: string | null;
   startConversation: (personaId?: string) => Promise<void>;
   pauseConversation: () => Promise<void>;
   resumeConversation: () => Promise<void>;
@@ -36,9 +37,10 @@ export const TavusProvider: React.FC<TavusProviderProps> = ({ children }) => {
   const [conversationState, setConversationState] = useState<'idle' | 'connecting' | 'active' | 'paused' | 'ended' | 'error'>('idle');
   const [conversationDuration, setConversationDuration] = useState(0);
   const [turnCount, setTurnCount] = useState(0);
-  const [currentPersona, setCurrentPersona] = useState('default');
+  const [currentPersona, setCurrentPersona] = useState('pde7ef583431');
   const [availablePersonas, setAvailablePersonas] = useState<TavusPersona[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const [conversationUrl, setConversationUrl] = useState<string | null>(null);
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
   const [isApiConfigured, setIsApiConfigured] = useState(false);
 
@@ -105,10 +107,12 @@ export const TavusProvider: React.FC<TavusProviderProps> = ({ children }) => {
 
     try {
       const conversation = await tavusService.createConversation(selectedPersona);
-      setCurrentConversationId(conversation.id);
+      setCurrentConversationId(conversation.conversation_id);
+      setConversationUrl(conversation.conversation_url);
       setConversationState('active');
       setConversationDuration(0);
       setTurnCount(0);
+      console.log('Tavus conversation started:', conversation.conversation_url);
     } catch (error) {
       console.error('Failed to start conversation:', error);
       setConversationState('error');
@@ -181,6 +185,7 @@ export const TavusProvider: React.FC<TavusProviderProps> = ({ children }) => {
     currentPersona,
     availablePersonas,
     currentConversationId,
+    conversationUrl,
     startConversation,
     pauseConversation,
     resumeConversation,

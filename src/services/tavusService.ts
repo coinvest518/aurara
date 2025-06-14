@@ -1,18 +1,19 @@
 import { API_CONFIG } from '../config/api';
 
 export interface TavusConversation {
-  id: string;
+  conversation_id: string;
+  conversation_url: string;
   status: 'idle' | 'connecting' | 'active' | 'paused' | 'ended';
-  personaId: string;
-  replicaId: string;
+  persona_id: string;
+  replica_id?: string;
 }
 
 export interface TavusPersona {
-  id: string;
-  name: string;
-  description: string;
-  voice: string;
-  personality: string;
+  persona_id: string;
+  persona_name: string;
+  system_prompt: string;
+  default_replica_id: string;
+  context?: string;
 }
 
 class TavusService {
@@ -46,17 +47,22 @@ class TavusService {
   async createConversation(personaId: string, replicaId?: string): Promise<TavusConversation> {
     const payload = {
       persona_id: personaId,
-      replica_id: replicaId,
+      replica_id: replicaId || undefined,
+      conversation_name: `AI Agent Session ${Date.now()}`,
+      callback_url: `${window.location.origin}/webhook/tavus`,
       properties: {
-        max_duration: 1800, // 30 minutes
+        max_duration: 1800,
         language: 'en',
+        enable_recording: false
       }
     };
 
-    return this.makeRequest(API_CONFIG.tavus.endpoints.conversations, {
+    const response = await this.makeRequest('/conversations', {
       method: 'POST',
       body: JSON.stringify(payload),
     });
+
+    return response.data || response;
   }
 
   async getConversation(conversationId: string): Promise<TavusConversation> {
@@ -82,7 +88,25 @@ class TavusService {
   }
 
   async getPersonas(): Promise<TavusPersona[]> {
-    return this.makeRequest(API_CONFIG.tavus.endpoints.personas);
+    try {
+      const response = await this.makeRequest('/personas');
+      return response.data || response;
+    } catch (error) {
+      console.error('Failed to fetch personas from API:', error);
+      // Return your specific persona as fallback
+      return [{
+        persona_id: 'pde7ef583431',
+        persona_name: 'Empathy',
+        system_prompt: 'You are an empathetic AI assistant.',
+        default_replica_id: 'r9d30b0e55ac',
+        context: 'Empathy persona for meaningful conversations'
+      }];
+    }
+  }
+
+  async getPersona(personaId: string): Promise<TavusPersona> {
+    const response = await this.makeRequest(`/personas/${personaId}`);
+    return response.data || response;
   }
 
   async getReplicas(): Promise<any[]> {
