@@ -51,12 +51,7 @@ class TavusService {
       persona_id: personaId,
       replica_id: replicaId || undefined,
       conversation_name: `AI Agent Session ${Date.now()}`,
-      callback_url: `${window.location.origin}/webhook/tavus`,
-      properties: {
-        max_duration: 1800,
-        language: 'en',
-        enable_recording: false
-      }
+      callback_url: `${window.location.origin}/webhook/tavus`
     };
 
     const response = await this.makeRequest('/conversations', {
