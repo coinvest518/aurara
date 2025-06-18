@@ -1,4 +1,5 @@
 import { API_CONFIG } from '../config/api';
+import { saveConversationSession } from './conversationSessionService';
 
 export interface TavusConversation {
   conversation_id: string;
@@ -85,60 +86,37 @@ class TavusService {
   }
 
   async getPersonas(): Promise<TavusPersona[]> {
-    try {
-      console.log('Fetching Empathy persona from Tavus API...');
-      
-      // First, try to get the specific Empathy persona directly
-      try {
-        const empathyResponse = await this.makeRequest('/personas/pde7ef583431');
-        console.log('Empathy persona response:', empathyResponse);
-        
-        const empathyPersona = empathyResponse.data || empathyResponse;
-        if (empathyPersona && empathyPersona.persona_id) {
-          console.log('Successfully loaded Empathy persona');
-          return [empathyPersona];
-        }
-      } catch (empathyError) {
-        console.log('Could not fetch Empathy persona directly, trying list endpoint:', empathyError);
-      }
-      
-      // Fallback: Get list of personas and look for Empathy
-      console.log('Fetching personas list from Tavus API...');
-      const response = await this.makeRequest('/personas');
-      console.log('Tavus personas list response:', response);
-      
-      const personas = Array.isArray(response) ? response : response.data;
-      if (personas && personas.length > 0) {
-        // Check if Empathy persona is in the list
-        const empathyPersona = personas.find(p => p.persona_id === 'pde7ef583431');
-        if (empathyPersona) {
-          // Put Empathy first in the list
-          return [empathyPersona, ...personas.filter(p => p.persona_id !== 'pde7ef583431')];
-        }
-        // Return all personas with manual Empathy persona at the top
-        return [{
-          persona_id: 'pde7ef583431',
-          persona_name: 'Empathy',
-          system_prompt: 'You are Empathy, a versatile AI companion acting as both a trusted friend and a professional psychologist...',
-          default_replica_id: 'r9d30b0e55ac',
-          context: 'Empathy persona for meaningful conversations'
-        }, ...personas];
-      }
-      
-      // If no personas found, return just the Empathy persona
-      throw new Error('No personas found in API response');
-      
-    } catch (error) {
-      console.error('Failed to fetch personas from API:', error);
-      // Return your specific persona as fallback
-      return [{
+    // Always return only Empathy and Daniel
+    return [
+      {
         persona_id: 'pde7ef583431',
         persona_name: 'Empathy',
-        system_prompt: 'You are Empathy, a versatile AI companion acting as both a trusted friend and a professional psychologist...',
+        system_prompt: 'You are Empathy, a versatile AI companion...',
         default_replica_id: 'r9d30b0e55ac',
         context: 'Empathy persona for meaningful conversations'
-      }];
-    }
+      },
+      {
+        persona_id: 'pfab762661bb',
+        persona_name: 'Daniel',
+        system_prompt: 'You are Daniel, a helpful and insightful AI persona.',
+        default_replica_id: 'r292fa3a149f',
+        context: 'Daniel persona for advice and support'
+      },
+      {
+        persona_id: 'pd092acfe184',
+        persona_name: 'Anna',
+        system_prompt: 'You are Anna, a creative and energetic AI persona.',
+        default_replica_id: 'r4dcf31b60e1',
+        context: 'Anna persona for creative brainstorming and motivation'
+      },
+      {
+        persona_id: 'p60bf9c1b7e7',
+        persona_name: 'Rose',
+        system_prompt: 'You are Rose, a thoughtful and encouraging AI persona.',
+        default_replica_id: 'r90105daccb4',
+        context: 'Rose persona for positive support and motivation'
+      }
+    ];
   }
 
   async getPersona(personaId: string): Promise<TavusPersona> {
@@ -148,6 +126,25 @@ class TavusService {
 
   async getReplicas(): Promise<any[]> {
     return this.makeRequest(API_CONFIG.tavus.endpoints.replicas);
+  }
+
+  // Add a method to save conversation/session to Supabase
+  async saveSessionToSupabase({ userId, personaId, startTime, endTime, transcript }: {
+    userId: string;
+    personaId: string;
+    startTime: string;
+    endTime: string;
+    transcript: string;
+  }) {
+    const duration = (new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000;
+    return saveConversationSession({
+      user_id: userId,
+      persona_id: personaId,
+      start_time: startTime,
+      end_time: endTime,
+      duration,
+      transcript,
+    });
   }
 }
 

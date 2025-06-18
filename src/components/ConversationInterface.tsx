@@ -13,6 +13,7 @@ interface ConversationInterfaceProps {
   isPaused: boolean;
   onPauseToggle: () => void;
   onRestart: () => void;
+  onSessionEnd?: (transcript: string, startTime: Date, endTime: Date) => void;
 }
 
 export const ConversationInterface: React.FC<ConversationInterfaceProps> = ({
@@ -20,6 +21,7 @@ export const ConversationInterface: React.FC<ConversationInterfaceProps> = ({
   isPaused,
   onPauseToggle,
   onRestart,
+  onSessionEnd,
 }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -31,6 +33,22 @@ export const ConversationInterface: React.FC<ConversationInterfaceProps> = ({
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [sessionStart, setSessionStart] = useState<Date | null>(null);
+
+  useEffect(() => {
+    if (isActive && !sessionStart) {
+      setSessionStart(new Date());
+    }
+    if (!isActive && sessionStart) {
+      // Session ended
+      const endTime = new Date();
+      if (onSessionEnd) {
+        onSessionEnd(messages.map(m => `${m.sender === 'user' ? 'You' : 'Agent'}: ${m.text}`).join('\n'), sessionStart, endTime);
+      }
+      setSessionStart(null);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isActive]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
