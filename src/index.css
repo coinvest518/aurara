@@ -1,10 +1,31 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind base, components, and utilities should be injected here by the Tailwind build process. 
+   If you are not using Tailwind CLI or PostCSS, you must include the generated CSS instead. */
 
 @layer base {
+  :root {
+    color-scheme: light;
+  }
+  
   body {
     @apply bg-primary text-slate-50;
+  }
+
+  /* Override for pricing page */
+  .bg-white {
+    @apply !bg-white;
+  }
+  
+  /* Override text colors in pricing section */
+  .text-gray-900 {
+    @apply !text-gray-900;
+  }
+  
+  .text-gray-600 {
+    @apply !text-gray-600;
+  }
+  
+  .text-gray-500 {
+    @apply !text-gray-500;
   }
 }
 

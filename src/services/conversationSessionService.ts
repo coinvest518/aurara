@@ -1,7 +1,7 @@
 import { supabase } from '../supabaseClient';
 
 export interface ConversationSession {
-  id?: string;
+  id?: string; // text, not uuid
   user_id: string;
   persona_id: string;
   start_time: string;

@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 -- Create conversation_sessions table
 CREATE TABLE IF NOT EXISTS conversation_sessions (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  id text PRIMARY KEY,
   user_id uuid REFERENCES users(id),
   persona_id VARCHAR(64),
   start_time TIMESTAMP,
@@ -29,7 +29,19 @@ CREATE TABLE IF NOT EXISTS exercises (
 CREATE TABLE IF NOT EXISTS exercise_completions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid REFERENCES users(id),
-  session_id uuid REFERENCES conversation_sessions(id),
+  session_id text REFERENCES conversation_sessions(id),
   exercise_id uuid REFERENCES exercises(id),
   completed_at TIMESTAMP DEFAULT now()
+);
+
+-- Create payments table for Stripe subscription integration
+CREATE TABLE IF NOT EXISTS payments (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id uuid REFERENCES users(id),
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
+  status TEXT,
+  amount INTEGER,
+  currency TEXT,
+  created_at TIMESTAMP DEFAULT now()
 );

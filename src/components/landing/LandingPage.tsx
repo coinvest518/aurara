@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '../../utils/cn';
 import { MessageCircle, Shield, Clock, Brain, ArrowRight, Loader2 } from 'lucide-react';
@@ -43,7 +43,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
   const [user, setUser] = useState<any>(null);
 
   // Check for existing session
-  React.useEffect(() => {
+  useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
@@ -96,22 +96,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
   );
   return (
     <div className="min-h-screen bg-[#f6efef] text-[#33292c]">
-      {/* Navigation */}
-      <nav className="fixed top-0 z-50 w-full bg-white/80 shadow backdrop-blur-sm">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">          <div className="flex items-center space-x-3">
-            <div className="relative h-10 w-10">
-              <div className="absolute inset 0 animate-pulse rounded-xl bg-accent-teal/20" />
-              <div className="relative flex h-full w-full items-center justify-center rounded-xl bg-accent-teal">
-                <Brain className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <span className="text-xl font-semibold text-[#33292c]">Aurora - AI Companion</span>
-          </div>
-          <button className="rounded-xl bg-accent-teal px-4 py-2 text-sm font-medium text-white hover:bg-accent-teal/90" onClick={() => setShowAuth(true)}>
-            Sign In
-          </button>
-        </div>
-      </nav>
       {/* Hero Section */}
       <div className="relative overflow-hidden pt-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -260,7 +244,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
           </div>
           {/* Right: Illustration */}
           <div className="flex justify-center items-center h-full">
-            <img src="/assets/avatars/banner_persona.png" alt="Aurora About" className="rounded-2xl shadow-xl w-full max-w-md object-contain object-center" style={{height: '340px', background: '#f6efef'}} />
+            <img src="/assets/avatars/charlie.png" alt="Aurora About" className="rounded-2xl shadow-xl w-full max-w-md object-contain object-center" style={{height: '340px', background: '#f6efef'}} />
           </div>
         </div>
         {/* Approach Features */}
@@ -290,38 +274,46 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
         </div>
       </div>
 
-      {/* Services Section */}
+      {/* Services Section - Aurora App Specific */}
       <div className="bg-accent-teal/5 py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm">Services</span>
-            <h2 className="mt-2 text-3xl font-bold text-slate-900">What Aurora Can Offer</h2>
-            <p className="mt-4 text-lg text-slate-700">Choose the support that fits your needs—individual, couples, or group sessions, all powered by AI and real therapeutic techniques.</p>
+            <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm">How Aurora Helps</span>
+            <h2 className="mt-2 text-3xl font-bold text-slate-900">Your AI Bestie & Therapy Buddy</h2>
+            <p className="mt-4 text-lg text-slate-700">
+              Aurora blends real psychology with a warm, human touch—offering daily support, emotional check-ins, and playful encouragement. It’s not just therapy, it’s a friendship that grows with you.
+            </p>
           </div>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {/* Individual Psychotherapy */}
+            {/* AI Companion */}
             <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center p-8">
-              <img src="/assets/avatars/AI Interviewer.png" alt="Individual Therapy" className="w-20 h-20 rounded-full mb-4 shadow" />
+              <img src="/assets/avatars/AI Interviewer.png" alt="AI Companion" className="w-24 h-24 rounded-full mb-4 shadow object-cover" />
               <span className="text-accent-teal font-bold text-2xl mb-2">01.</span>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">Individual Psychotherapy</h3>
-              <p className="text-slate-600 mb-4 text-center">Personalized, one-on-one support for your unique journey. Aurora adapts to your mood and goals, offering evidence-based exercises and empathetic conversation.</p>
-              <button className="mt-auto px-6 py-2 rounded-lg bg-accent-teal text-white font-semibold hover:bg-accent-teal/90 transition">Book a Session</button>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">AI Best Friend</h3>
+              <p className="text-slate-600 mb-4 text-center">
+                Chat with Aurora like you would with a caring friend—get jokes, check-ins, and real emotional support that adapts to your mood and personality.
+              </p>
+              <button className="mt-auto px-6 py-2 rounded-lg bg-accent-teal text-white font-semibold hover:bg-accent-teal/90 transition">Start a Conversation</button>
             </div>
-            {/* Couples Therapy */}
+            {/* Therapy Intelligence */}
             <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center p-8">
-              <img src="/assets/avatars/charlie.png" alt="Couples Therapy" className="w-20 h-20 rounded-full mb-4 shadow" />
+              <img src="/assets/avatars/charlie.png" alt="Therapy Intelligence" className="w-24 h-24 rounded-full mb-4 shadow object-cover" />
               <span className="text-accent-teal font-bold text-2xl mb-2">02.</span>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">Couples Therapy</h3>
-              <p className="text-slate-600 mb-4 text-center">Strengthen your relationship with guided conversations and exercises designed for couples, focusing on communication, empathy, and shared growth.</p>
-              <button className="mt-auto px-6 py-2 rounded-lg bg-accent-teal text-white font-semibold hover:bg-accent-teal/90 transition">Book a Session</button>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">Therapeutic Guidance</h3>
+              <p className="text-slate-600 mb-4 text-center">
+                Aurora uses CBT, mindfulness, and DBT tools to help you manage stress, anxiety, and everyday overwhelm—always with empathy and science.
+              </p>
+              <button className="mt-auto px-6 py-2 rounded-lg bg-accent-teal text-white font-semibold hover:bg-accent-teal/90 transition">Try a Check-In</button>
             </div>
-            {/* Group Therapy */}
+            {/* Emotional Growth */}
             <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center p-8">
-              <img src="/assets/avatars/History Teacher.png" alt="Group Therapy" className="w-20 h-20 rounded-full mb-4 shadow" />
+              <img src="/assets/avatars/History Teacher.png" alt="Emotional Growth" className="w-24 h-24 rounded-full mb-4 shadow object-cover" />
               <span className="text-accent-teal font-bold text-2xl mb-2">03.</span>
-              <h3 className="text-xl font-semibold text-slate-900 mb-2">Group Therapy</h3>
-              <p className="text-slate-600 mb-4 text-center">Join a supportive community. Aurora facilitates group sessions for shared experiences, learning, and encouragement in a safe, moderated space.</p>
-              <button className="mt-auto px-6 py-2 rounded-lg bg-accent-teal text-white font-semibold hover:bg-accent-teal/90 transition">Book a Session</button>
+              <h3 className="text-xl font-semibold text-slate-900 mb-2">Emotional Growth</h3>
+              <p className="text-slate-600 mb-4 text-center">
+                Track your moods, celebrate wins, and get personalized reminders. Aurora remembers your patterns and helps you build resilience, one day at a time.
+              </p>
+              <button className="mt-auto px-6 py-2 rounded-lg bg-accent-teal text-white font-semibold hover:bg-accent-teal/90 transition">See Your Progress</button>
             </div>
           </div>
         </div>
@@ -336,7 +328,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
             <h2 className="mt-2 text-3xl font-bold text-slate-900">You Are the Main Puzzle</h2>
             <p className="mt-4 text-lg text-slate-700">Building a relationship with yourself is the foundation of growth. Aurora helps you explore your emotions, track your mood, and celebrate your progress with real, actionable insights.</p>
             <div className="mt-8 flex gap-4">
-              <img src="/assets/avatars/mood log .png" alt="Mood Log" className="rounded-xl w-32 h-32 object-cover shadow" />
               <img src="/assets/avatars/Rose.png" alt="Rose Persona" className="rounded-xl w-32 h-32 object-cover shadow" />
             </div>
             <div className="mt-8 bg-accent-teal/10 rounded-xl pt-4 px-6 pb-2 text-accent-teal font-semibold flex justify-center items-center text-lg animate-pulse mb-8">
@@ -347,8 +338,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
           <div className="flex flex-col items-center">
             <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm mb-2">Watch How Aurora Works</span>
             <div className="w-full max-w-md rounded-2xl overflow-hidden shadow-xl bg-black">
-              <video controls poster="/assets/avatars/daily mood log.avif" className="w-full h-64 object-cover">
-                <source src="/assets/avatars/db374f03.mp4" type="video/mp4" />
+              <video controls poster="/assets/Rose.png" className="w-full h-64 object-cover">
+                <source src="/assets/avatars/talkingai.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -413,97 +404,48 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
           <div className="grid gap-8 md:grid-cols-2">
             {/* Blog Article 1 */}
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col">
-              <img src="/assets/avatars/banner_persona.png" alt="Blog 1" className="w-full h-48 object-cover" />
+              <img src="/assets/avatars/blog.png" alt="Blog 1" className="w-full h-48 object-cover" />
               <div className="p-6 flex-1 flex flex-col">
                 <span className="text-xs text-accent-teal font-semibold mb-2">Self-Care</span>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">The Power of Daily Mood Tracking</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">Welcome to Aurora Blog</h3>
                 <span className="text-xs text-slate-400 mb-2">June 2025</span>
-                <p className="text-slate-700 mb-4 flex-1">Discover how tracking your mood each day can reveal patterns, boost self-awareness, and help you take control of your emotional health.</p>
-                <a href="#" className="text-accent-teal font-semibold hover:underline">Read More</a>
+                <p className="text-slate-700 mb-4 flex-1">This is our first post! Aurora is here to help you grow, reflect, and thrive every day.</p>
+                <a href="/blog" className="text-accent-teal font-semibold hover:underline">Read More</a>
               </div>
             </div>
             {/* Blog Article 2 */}
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden flex flex-col">
-              <img src="/assets/avatars/Tech Career Coach.png" alt="Blog 2" className="w-full h-48 object-cover" />
+              <img src="/assets/avatars/Ai.png" alt="Blog 2" className="w-full h-48 object-cover" />
               <div className="p-6 flex-1 flex flex-col">
                 <span className="text-xs text-accent-teal font-semibold mb-2">Therapy Science</span>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">How AI Can Support Your Mental Health</h3>
-                <span className="text-xs text-slate-400 mb-2">May 2025</span>
-                <p className="text-slate-700 mb-4 flex-1">Learn about the science behind AI-powered therapy, and how Aurora uses evidence-based techniques to provide real support.</p>
-                <a href="#" className="text-accent-teal font-semibold hover:underline">Read More</a>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">5 Practical CBT Tips for Everyday Life</h3>
+                <span className="text-xs text-slate-400 mb-2">June 2025</span>
+                <p className="text-slate-700 mb-4 flex-1">Simple, actionable Cognitive Behavioral Therapy strategies to help you manage stress, mood, and self-talk.</p>
+                <a href="/blog" className="text-accent-teal font-semibold hover:underline">Read More</a>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Footer Section */}
-      <footer className="bg-[#33292c] text-white py-12 mt-0">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-12">
-          {/* Left: Logo & Links */}
-          <div>
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="relative h-10 w-10">
-                <div className="absolute inset-0 animate-pulse rounded-xl bg-accent-teal/20" />
-                <div className="relative flex h-full w-full items-center justify-center rounded-xl bg-accent-teal">
-                  <Brain className="h-6 w-6 text-primary" />
-                </div>
-              </div>
-              <span className="text-xl font-semibold">Aurora</span>
-            </div>
-            <nav className="flex flex-col space-y-2">
-              <a href="#about" className="hover:underline">About</a>
-              <a href="#services" className="hover:underline">Services</a>
-              <a href="#blog" className="hover:underline">Blog</a>
-              <a href="#contact" className="hover:underline">Contact</a>
-            </nav>
-          </div>
-          {/* Center: Address & Contact */}
-          <div className="text-center md:text-left">
-            <h4 className="font-semibold mb-2">Find Me Here</h4>
-            <p className="text-slate-300">123 Aurora Lane<br />San Francisco, CA 94110</p>
-            <p className="mt-2 text-slate-300">support@aurora.com<br />+1 (234) 567-890</p>
-          </div>
-          {/* Right: Support & Social */}
-          <div className="text-center md:text-right">
-            <h4 className="font-semibold mb-2">Having a Hard Time?</h4>
-            <p className="text-slate-300 mb-4">Aurora is here to support you. Follow us for updates and resources.</p>
-            <div className="flex justify-center md:justify-end space-x-4">
-              <a href="#" className="hover:text-accent-teal" aria-label="Twitter">
-                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M22.46 6c-.77.35-1.6.59-2.47.7a4.3 4.3 0 0 0 1.88-2.37 8.59 8.59 0 0 1-2.72 1.04A4.28 4.28 0 0 0 16.11 4c-2.37 0-4.29 1.92-4.29 4.29 0 .34.04.67.11.99C7.69 8.99 4.07 7.13 1.64 4.15c-.37.64-.58 1.38-.58 2.17 0 1.5.76 2.82 1.92 3.6a4.28 4.28 0 0 1-1.94-.54v.05c0 2.1 1.5 3.85 3.5 4.25-.36.1-.74.16-1.13.16-.28 0-.54-.03-.8-.08.54 1.7 2.1 2.94 3.95 2.97A8.6 8.6 0 0 1 2 19.54c-.28 0-.56-.02-.83-.05A12.13 12.13 0 0 0 8.29 21.5c7.55 0 11.68-6.26 11.68-11.68 0-.18-.01-.36-.02-.54A8.18 8.18 0 0 0 24 4.59a8.36 8.36 0 0 1-2.54.7z"/></svg>
-              </a>
-              <a href="#" className="hover:text-accent-teal" aria-label="Facebook">
-                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.04c-5.5 0-9.96 4.46-9.96 9.96 0 4.41 3.6 8.07 8.24 8.93v-6.32h-2.48v-2.61h2.48V9.41c0-2.45 1.49-3.8 3.77-3.8 1.09 0 2.23.2 2.23.2v2.45h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.61h-2.34v6.32c4.64-.86 8.24-4.52 8.24-8.93 0-5.5-4.46-9.96-9.96-9.96z"/></svg>
-              </a>
-              <a href="#" className="hover:text-accent-teal" aria-label="Instagram">
-                <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M21.35 11.1c0-5.05-4.1-9.15-9.15-9.15S3.05 6.05 3.05 11.1c0 4.54 3.3 8.3 7.62 9.07v-6.42h-2.3v-2.65h2.3V9.41c0-2.28 1.39-3.53 3.5-3.53.99 0 2.03.18 2.03.18v2.23h-1.14c-1.13 0-1.48.7-1.48 1.41v1.7h2.52l-.4 2.65h-2.12v6.42c4.32-.77 7.62-4.53 7.62-9.07z"/></svg>
-              </a>
-            </div>
-          </div>
-        </div>
-        <div className="mt-12 border-t border-white/20 pt-6 text-center text-slate-400 text-sm">
-          &copy; {new Date().getFullYear()} Aurora. All rights reserved.
-        </div>
-      </footer>
-
       {showAuth && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-    <div className="bg-white rounded-2xl shadow-2xl p-6 min-w-[320px] max-w-md relative">
-      <button
-        className="absolute top-2 right-2 text-slate-400 hover:text-slate-700 text-xl"
-        onClick={() => setShowAuth(false)}
-        aria-label="Close auth"
-      >
-        ×
-      </button>
-      <Auth onAuthSuccess={async () => {
-        const { data: { session } } = await supabase.auth.getSession();
-        setUser(session?.user ?? null);
-        setShowAuth(false);
-      }} />
-    </div>
-  </div>
-)}
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 min-w-[320px] max-w-md relative">
+            <button
+              className="absolute top-2 right-2 text-slate-400 hover:text-slate-700 text-xl"
+              onClick={() => setShowAuth(false)}
+              aria-label="Close auth"
+            >
+              ×
+            </button>
+            <Auth onAuthSuccess={async () => {
+              const { data: { session } } = await supabase.auth.getSession();
+              setUser(session?.user ?? null);
+              setShowAuth(false);
+            }} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

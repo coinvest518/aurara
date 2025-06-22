@@ -5,15 +5,15 @@ import { StatusIndicator } from './components/StatusIndicator';
 import { WebRTCProvider, useWebRTC } from './components/WebRTCManager';
 import { TavusProvider, useTavus } from './components/TavusIntegration';
 import { LandingPage } from './components/landing/LandingPage';
-import { Settings, Bot } from 'lucide-react';
 import { supabase } from './supabaseClient';
 import { Auth } from './components/Auth';
 import type { User } from '@supabase/supabase-js';
 import { ConversationHistory } from './components/ConversationHistory';
 import { MoodTracker, MoodOption } from './components/MoodTracker';
 import { saveMoodToSession } from './services/moodService';
-import { ExampleTool } from './components/tools/ExampleTool';
-import { OpenAITool } from './components/tools/OpenAITool';
+import PricingTabs from './components/PricingTabs';
+
+import { getMoodHistory } from './services/moodService';
 
 const MainApp: React.FC = () => {
   const webrtc = useWebRTC();
@@ -27,6 +27,10 @@ const MainApp: React.FC = () => {
   const [showPickPersonaToast, setShowPickPersonaToast] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [selectedMood, setSelectedMood] = useState<MoodOption['key']>('happy'); // Default to 'happy'
+  const [conversationStarted, setConversationStarted] = useState(false);
+  const [moodHistory, setMoodHistory] = useState<MoodHistoryItem[]>([]);
+  const [showPricing, setShowPricing] = useState(false);
+  const [userPlan, setUserPlan] = useState<string>('free');
 
   // On mount, check for existing session
   useEffect(() => {
@@ -49,26 +53,49 @@ const MainApp: React.FC = () => {
   }, [selectedMood, tavus.currentConversationId, user]);
 
   // Fetch mood history for MoodChart
-  // Fetch mood history for MoodChart
-    // Removed unused moodHistory effect
+  useEffect(() => {
+    if (user) {
+      getMoodHistory(user.id)
+        .then((data) => setMoodHistory(data || []))
+        .catch(console.error);
+    }
+  }, [user, selectedMood]);
+
+  // Fetch user plan from Supabase (example: from a 'profiles' or 'payments' table)
+  useEffect(() => {
+    if (user) {
+      // Example: fetch from a 'profiles' table with a 'plan' column
+      supabase
+        .from('profiles')
+        .select('plan')
+        .eq('id', user.id)
+        .single()
+        .then(({ data }) => {
+          if (data?.plan) setUserPlan(data.plan);
+        });
+    }
+  }, [user]);
+
   const handleStartConversation = async () => {
     if (!selectedPersonaId) {
       setShowPickPersonaToast(true);
       setTimeout(() => setShowPickPersonaToast(false), 3000);
       return;
     }
+    setConversationStarted(true);
     try {
       await webrtc.connect();
       await tavus.startConversation(selectedPersonaId);
     } catch (error) {
       console.error('Failed to start conversation:', error);
+      setConversationStarted(false);
     }
   };
 
   // Landing page only transitions to dashboard, does NOT start conversation
   if (!isDashboard) {
     return <LandingPage 
-      onStartChat={async () => { setIsDashboard(true); }}
+      onStartChat={async () => { setIsDashboard(true); setConversationStarted(false); }}
       isApiConfigured={webrtc.isApiConfigured && tavus.isApiConfigured}
     />;
   }
@@ -77,6 +104,7 @@ const MainApp: React.FC = () => {
     webrtc.disconnect();
     tavus.endConversation();
     setIsDashboard(false);
+    setConversationStarted(false);
   };
 
   const handleFullscreen = () => {
@@ -96,105 +124,70 @@ const MainApp: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-teal-50">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm shadow-sm border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-teal-600 rounded-lg flex items-center justify-center">
-                <Bot className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-slate-800">My Buddy</h1>
-                <p className="text-sm text-slate-600">AI Friend & Confidant</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setShowSettings(!showSettings)}
-                className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors text-slate-600"
-              >
-                <Settings className="w-5 h-5" />
-              </button>
-              <button
-                onClick={async () => { await supabase.auth.signOut(); setUser(null); }}
-                className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium transition-colors"
-              >
-                Logout
-              </button>
-              <button
-                onClick={handleEndConversation}
-                className="px-4 py-2 rounded-lg bg-red-100 hover:bg-red-200 text-red-600 text-sm font-medium transition-colors"
-              >
-                End Session
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Mood Tracker Section (horizontal tab, no MoodChart) */}
-      <div className="max-w-2xl mx-auto mt-6 mb-2 bg-white rounded-xl shadow p-4 flex flex-col items-center">
-        <h2 className="text-lg font-semibold text-slate-700 mb-2">How are you feeling today?</h2>
-        <MoodTracker selectedMood={selectedMood as MoodOption['key']} onSelectMood={setSelectedMood} />
-      </div>
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Tools Section: Only show when dashboard is active and a conversation is started */}
-        {isDashboard && tavus.currentConversationId && (
-          <div className="mb-6 flex flex-col gap-4">
-            <ExampleTool />
-            <OpenAITool />
+        {/* Mood summary from moodHistory */}
+        {moodHistory.length > 0 && (
+          <div className="mb-4 text-center text-slate-700">
+            Last mood: <span className="font-semibold">{moodHistory[moodHistory.length - 1].mood}</span> on {new Date(moodHistory[moodHistory.length - 1].start_time).toLocaleDateString()}
           </div>
         )}
-        {/* Main Interface */}
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Video Agent - Main Area */}
+          {/* Main Area */}
           <div className="lg:col-span-3 space-y-6">
-            <VideoAgent
-              isConnected={webrtc.isConnected}
-              isVideoEnabled={webrtc.isVideoEnabled}
-              isAudioEnabled={webrtc.isAudioEnabled}
-              conversationUrl={tavus.conversationUrl ?? undefined}
-              onVideoToggle={webrtc.toggleVideo}
-              onAudioToggle={webrtc.toggleAudio}
-              onEndCall={handleEndConversation}
-              onFullscreen={handleFullscreen}
-            />
-            
-            {/* Conversation Interface */}
-            <div className="h-96">
-              <ConversationInterface
-                isActive={tavus.conversationState === 'active'}
-                isPaused={tavus.conversationState === 'paused'}
-                onPauseToggle={() => {
-                  if (tavus.conversationState === 'active') {
-                    tavus.pauseConversation();
-                  } else if (tavus.conversationState === 'paused') {
-                    tavus.resumeConversation();
-                  }
-                }}
-                onRestart={tavus.restartConversation}
-                onSessionEnd={async (transcript, start, end) => {
-                  if (user && selectedPersonaId) {
-                    try {
-                      await tavus.saveSessionToSupabase({
-                        userId: user.id,
-                        personaId: selectedPersonaId,
-                        startTime: start.toISOString(),
-                        endTime: end.toISOString(),
-                        transcript,
-                      });
-                    } catch (e) {
-                      console.error('Failed to save session:', e);
-                    }
-                  }
-                }}
-              />
+            {/* MoodTracker centered above video agent */}
+            <div className="flex justify-center mb-6">
+              <MoodTracker selectedMood={selectedMood} onSelectMood={setSelectedMood} />
             </div>
+            {/* Video Agent and Conversation UI always shown if persona is picked */}
+            {selectedPersonaId ? (
+              <>
+                <VideoAgent
+                  isConnected={conversationStarted ? webrtc.isConnected : false}
+                  isVideoEnabled={conversationStarted ? webrtc.isVideoEnabled : false}
+                  isAudioEnabled={conversationStarted ? webrtc.isAudioEnabled : false}
+                  conversationUrl={conversationStarted ? tavus.conversationUrl ?? undefined : undefined}
+                  onVideoToggle={webrtc.toggleVideo}
+                  onAudioToggle={webrtc.toggleAudio}
+                  onEndCall={handleEndConversation}
+                  onFullscreen={handleFullscreen}
+                />
+                <div className="h-96">
+                  <ConversationInterface
+                    isActive={conversationStarted && tavus.conversationState === 'active'}
+                    isPaused={conversationStarted && tavus.conversationState === 'paused'}
+                    onPauseToggle={() => {
+                      if (conversationStarted && tavus.conversationState === 'active') {
+                        tavus.pauseConversation();
+                      } else if (conversationStarted && tavus.conversationState === 'paused') {
+                        tavus.resumeConversation();
+                      }
+                    }}
+                    onRestart={tavus.restartConversation}
+                    onSessionEnd={async (transcript, start, end) => {
+                      if (user && selectedPersonaId) {
+                        try {
+                          await tavus.saveSessionToSupabase({
+                            userId: user.id,
+                            personaId: selectedPersonaId,
+                            startTime: start.toISOString(),
+                            endTime: end.toISOString(),
+                            transcript,
+                          });
+                        } catch (e) {
+                          console.error('Failed to save session:', e);
+                        }
+                      }
+                    }}
+                  />
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-full py-24">
+                <h2 className="text-2xl font-bold mb-4 text-slate-800">Choose your AI Persona to begin</h2>
+                <p className="mb-8 text-slate-600">Select a persona from the sidebar and click Start Conversation.</p>
+              </div>
+            )}
           </div>
-
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Persona Selection */}
@@ -278,18 +271,15 @@ const MainApp: React.FC = () => {
               </div>
             </div>
             {/* Start Conversation Button */}
-            {!isDashboard && (
-              <button
-                onClick={handleStartConversation}
-                className="w-full mt-4 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors"
-                disabled={!selectedPersonaId}
-              >
-                Start Conversation
-              </button>
-            )}
+            <button
+              onClick={handleStartConversation}
+              className="w-full mt-4 px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors"
+              disabled={!selectedPersonaId || conversationStarted}
+            >
+              Start Conversation
+            </button>
           </div>
         </div>
-
         {/* Toast for pick persona */}
         {showPickPersonaToast && (
           <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in">
@@ -331,6 +321,27 @@ const MainApp: React.FC = () => {
             )}
           </div>
         </SettingsModal>
+
+        {/* Pricing Modal (for direct use, if needed) */}
+        {showPricing && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+            <div className="bg-white rounded-2xl shadow-2xl p-6 min-w-[320px] max-w-2xl relative">
+              <button
+                className="absolute top-2 right-2 text-slate-400 hover:text-slate-700 text-xl"
+                onClick={() => setShowPricing(false)}
+                aria-label="Close pricing"
+              >
+                ×
+              </button>
+              <PricingTabs currentPlan={userPlan} onSelectPlan={(plan) => {
+                // Use plan value to trigger Stripe checkout or upgrade logic
+                setShowPricing(false);
+                // Example: window.location.href = `/api/stripe/checkout?plan=${plan}`;
+                alert(`Selected plan: ${plan}`);
+              }} />
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
@@ -359,6 +370,12 @@ const SettingsModal: React.FC<{
     </div>
   );
 };
+
+interface MoodHistoryItem {
+  id: string;
+  start_time: string;
+  mood: 'happy' | 'motivated' | 'tired' | 'stressed' | 'sad';
+}
 
 function App() {
   return (

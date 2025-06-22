@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS exercises (
 CREATE TABLE IF NOT EXISTS exercise_completions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid REFERENCES users(id),
-  session_id uuid REFERENCES conversation_sessions(id),
+  session_id text REFERENCES conversation_sessions(id),
   exercise_id uuid REFERENCES exercises(id),
   completed_at TIMESTAMP DEFAULT now()
 );
