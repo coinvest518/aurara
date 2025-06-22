@@ -11,9 +11,8 @@ import type { User } from '@supabase/supabase-js';
 import { ConversationHistory } from './components/ConversationHistory';
 import { MoodTracker, MoodOption } from './components/MoodTracker';
 import { saveMoodToSession } from './services/moodService';
-import PricingTabs from './components/PricingTabs';
-
 import { getMoodHistory } from './services/moodService';
+
 
 const MainApp: React.FC = () => {
   const webrtc = useWebRTC();
@@ -29,8 +28,7 @@ const MainApp: React.FC = () => {
   const [selectedMood, setSelectedMood] = useState<MoodOption['key']>('happy'); // Default to 'happy'
   const [conversationStarted, setConversationStarted] = useState(false);
   const [moodHistory, setMoodHistory] = useState<MoodHistoryItem[]>([]);
-  const [showPricing, setShowPricing] = useState(false);
-  const [userPlan, setUserPlan] = useState<string>('free');
+
 
   // On mount, check for existing session
   useEffect(() => {
@@ -61,20 +59,7 @@ const MainApp: React.FC = () => {
     }
   }, [user, selectedMood]);
 
-  // Fetch user plan from Supabase (example: from a 'profiles' or 'payments' table)
-  useEffect(() => {
-    if (user) {
-      // Example: fetch from a 'profiles' table with a 'plan' column
-      supabase
-        .from('profiles')
-        .select('plan')
-        .eq('id', user.id)
-        .single()
-        .then(({ data }) => {
-          if (data?.plan) setUserPlan(data.plan);
-        });
-    }
-  }, [user]);
+
 
   const handleStartConversation = async () => {
     if (!selectedPersonaId) {
@@ -322,26 +307,7 @@ const MainApp: React.FC = () => {
           </div>
         </SettingsModal>
 
-        {/* Pricing Modal (for direct use, if needed) */}
-        {showPricing && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-            <div className="bg-white rounded-2xl shadow-2xl p-6 min-w-[320px] max-w-2xl relative">
-              <button
-                className="absolute top-2 right-2 text-slate-400 hover:text-slate-700 text-xl"
-                onClick={() => setShowPricing(false)}
-                aria-label="Close pricing"
-              >
-                ×
-              </button>
-              <PricingTabs currentPlan={userPlan} onSelectPlan={(plan) => {
-                // Use plan value to trigger Stripe checkout or upgrade logic
-                setShowPricing(false);
-                // Example: window.location.href = `/api/stripe/checkout?plan=${plan}`;
-                alert(`Selected plan: ${plan}`);
-              }} />
-            </div>
-          </div>
-        )}
+
       </main>
     </div>
   );

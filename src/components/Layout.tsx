@@ -2,13 +2,37 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Brain, Settings } from "lucide-react";
 import { supabase } from "../supabaseClient";
-import PricingTabs from './PricingTabs';
+import { useSubscription } from "../hooks/useSubscription";
+
+// Settings Modal Component
+const SettingsModal: React.FC<{
+  open: boolean;
+  onClose: () => void;
+  children?: React.ReactNode;
+}> = ({ open, onClose, children }) => {
+  if (!open) return null;
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 min-w-[320px] max-w-md relative">
+        <button
+          className="absolute top-2 right-2 text-slate-400 hover:text-slate-700 text-xl"
+          onClick={onClose}
+          aria-label="Close settings"
+        >
+          ×
+        </button>
+        <h2 className="text-lg font-bold mb-4 text-slate-800">Settings</h2>
+        {children}
+      </div>
+    </div>
+  );
+};
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const [showSettings, setShowSettings] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [showPricing, setShowPricing] = useState(false);
+  const { subscription } = useSubscription();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -39,53 +63,72 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="flex items-center space-x-6">
             <Link to="/" className={`hover:underline font-medium ${location.pathname === '/' ? 'text-accent-teal' : ''}`}>Home</Link>
             <Link to="/blog" className={`hover:underline font-medium ${location.pathname.startsWith('/blog') ? 'text-accent-teal' : ''}`}>Blog</Link>
-            <button
-              onClick={() => setShowPricing(true)}
-              className="hover:underline font-medium text-accent-teal"
-            >
+            <Link to="/pricing" className={`hover:underline font-medium ${location.pathname === '/pricing' ? 'text-accent-teal' : ''}`}>
               Pricing
-            </button>
+            </Link>
             {user && (
               <>
                 <button
-                  onClick={() => setShowSettings(!showSettings)}
-                  className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 transition-colors text-slate-600"
-                  title="Settings"
+                  onClick={() => setShowSettings(true)}
+                  className="relative h-8 w-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
                 >
-                  <Settings className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={async () => { await supabase.auth.signOut(); setUser(null); }}
-                  className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium transition-colors"
-                >
-                  Logout
+                  <Settings className="h-4 w-4 text-gray-600" />
                 </button>
               </>
             )}
           </div>
         </div>
       </nav>
+
       {/* Main Content */}
-      <main className="flex-1">{children}</main>
-      {/* Pricing Modal */}
-      {showPricing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-2xl shadow-2xl p-6 min-w-[320px] max-w-2xl relative">
-            <button
-              className="absolute top-2 right-2 text-slate-400 hover:text-slate-700 text-xl"
-              onClick={() => setShowPricing(false)}
-              aria-label="Close pricing"
-            >
-              ×
-            </button>
-            <PricingTabs />
+      <main className="flex-1">
+        {children}
+      </main>
+
+      {/* Settings Modal */}      <SettingsModal open={showSettings} onClose={() => setShowSettings(false)}>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Account Settings</span>
           </div>
+          <hr />
+          {user && (
+            <div className="text-sm">
+              <div className="mb-4">
+                <p className="font-medium text-gray-700">Email</p>
+                <p className="text-gray-600">{user.email}</p>
+              </div>
+              <div className="mb-4">
+                <p className="font-medium text-gray-700">Subscription Status</p>
+                <p className="text-gray-600 capitalize">
+                  {subscription?.subscription_type || 'Free'}
+                  {subscription?.current_period_end && (
+                    <span className="text-xs text-gray-500 ml-2">
+                      (until {new Date(subscription.current_period_end).toLocaleDateString()})
+                    </span>
+                  )}
+                </p>
+              </div>
+            </div>
+          )}
+          <hr />
+          <button
+            onClick={async () => {
+              await supabase.auth.signOut();
+              setShowSettings(false);
+            }}
+            className="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+          >
+            Sign Out
+          </button>
         </div>
-      )}
-      {/* Footer (optional, can be improved) */}
-      <footer className="bg-[#33292c] text-white py-8 mt-0">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center text-slate-400 text-sm">
-          &copy; {new Date().getFullYear()} Aurora. All rights reserved.
+      </SettingsModal>
+
+      {/* Footer */}
+      <footer className="bg-white/80 backdrop-blur-sm mt-auto">
+        <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+          <p className="text-center text-sm text-gray-500">
+            © 2025 Aurora AI. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>

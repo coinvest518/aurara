@@ -10,29 +10,14 @@
   body {
     @apply bg-primary text-slate-50;
   }
-
-  /* Override for pricing page */
-  .bg-white {
-    background-color: white !important;
-  }
-  
-  /* Override text colors in pricing section */
-  .text-gray-900 {
-    color: rgb(17 24 39) !important;
-  }
-  
-  .text-gray-600 {
-    color: rgb(75 85 99) !important;
-  }
-  
-  .text-gray-500 {
-    color: rgb(107 114 128) !important;
-  }
 }
 
 @layer utilities {
   .gradient-text {
-    @apply bg-gradient-to-r from-accent-teal via-accent-yellow to-accent-blue bg-clip-text text-transparent;
+    background: linear-gradient(to right, #14b8a6, #f59e0b, #3b82f6);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
   }
 }
 
