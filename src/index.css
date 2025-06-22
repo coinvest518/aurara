@@ -1,5 +1,6 @@
-/* Tailwind base, components, and utilities should be injected here by the Tailwind build process. 
-   If you are not using Tailwind CLI or PostCSS, you must include the generated CSS instead. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   :root {
@@ -12,20 +13,20 @@
 
   /* Override for pricing page */
   .bg-white {
-    @apply !bg-white;
+    background-color: white !important;
   }
   
   /* Override text colors in pricing section */
   .text-gray-900 {
-    @apply !text-gray-900;
+    color: rgb(17 24 39) !important;
   }
   
   .text-gray-600 {
-    @apply !text-gray-600;
+    color: rgb(75 85 99) !important;
   }
   
   .text-gray-500 {
-    @apply !text-gray-500;
+    color: rgb(107 114 128) !important;
   }
 }
 
@@ -41,15 +42,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-primary-900;
+  background-color: #040205;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply rounded-full bg-primary-400;
+  border-radius: 9999px;
+  background-color: #281943;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-primary-300;
+  background-color: #2F1D4E;
 }
 
 /* Smooth scrolling */
