@@ -1,14 +1,14 @@
 /// <reference types="vite/client" />
 import nodemailer from 'nodemailer';
 
-// Create reusable transporter object using SMTP transport
+// Use process.env for serverless environments like Vercel
 const transporter = nodemailer.createTransport({
-  host: import.meta.env.VITE_SMTP_HOST || 'smtp.gmail.com',
-  port: Number(import.meta.env.VITE_SMTP_PORT) || 587,
+  host: process.env.VITE_SMTP_HOST || 'smtp.gmail.com',
+  port: Number(process.env.VITE_SMTP_PORT) || 587,
   secure: false, // true for 465, false for other ports
   auth: {
-    user: import.meta.env.VITE_SMTP_USER,
-    pass: import.meta.env.VITE_SMTP_PASSWORD,
+    user: process.env.VITE_SMTP_USER,
+    pass: process.env.VITE_SMTP_PASSWORD,
   },
 });
 
@@ -17,8 +17,9 @@ export async function POST(req: Request) {
     const { name, email, interest, message } = await req.json();
 
     // Send mail with defined transport object
-    await transporter.sendMail({      from: `"Aurarora Contact Form" <${import.meta.env.VITE_SMTP_FROM_EMAIL}>`,
-      to: import.meta.env.VITE_CONTACT_EMAIL, // your receiving email
+    await transporter.sendMail({
+      from: `"Aurarora Contact Form" <${process.env.VITE_SMTP_FROM_EMAIL}>`,
+      to: process.env.VITE_CONTACT_EMAIL, // your receiving email
       subject: `New Custom AI Companion Request - ${interest}`,
       html: `
         <h2>New Contact Form Submission</h2>
