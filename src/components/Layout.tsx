@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Brain, Settings } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useSubscription } from "../hooks/useSubscription";
+import CompanionCarousel from "./CompanionCarousel";
 
 // Settings Modal Component
 const SettingsModal: React.FC<{
@@ -32,6 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const [showSettings, setShowSettings] = useState(false);
   const [user, setUser] = useState<any>(null);
+  const [showCompanions, setShowCompanions] = useState(false);
   const { subscription } = useSubscription();
 
   useEffect(() => {
@@ -66,6 +68,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <Link to="/pricing" className={`hover:underline font-medium ${location.pathname === '/pricing' ? 'text-accent-teal' : ''}`}>
               Pricing
             </Link>
+            <button
+              onClick={() => setShowCompanions(true)}
+              className="rounded-lg bg-accent-teal text-white px-4 py-2 font-semibold hover:bg-accent-teal/90 transition"
+            >
+              View Companions
+            </button>
             {user && (
               <>
                 <button
@@ -79,6 +87,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </nav>
+
+      {/* Companions Modal */}
+      {showCompanions && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-2xl shadow-2xl p-6 min-w-[320px] max-w-4xl w-full relative">
+            <button
+              className="absolute top-2 right-2 text-slate-400 hover:text-slate-700 text-xl"
+              onClick={() => setShowCompanions(false)}
+              aria-label="Close companions"
+            >
+              ×
+            </button>
+            <CompanionCarousel onClose={() => setShowCompanions(false)} />
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="flex-1">

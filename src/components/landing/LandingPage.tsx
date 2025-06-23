@@ -6,6 +6,7 @@ import Avatar from '../Avatar';
 import CheckInSection from '../CheckInSection';
 import { Auth } from '../Auth';
 import { supabase } from '../../supabaseClient';
+import ContactForm from '../ContactForm';
 
 const FeatureCard: React.FC<{
   icon: React.ReactNode;
@@ -108,8 +109,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
             >
               <div className="lg:py-24">
                 <h1 className="mt-4 text-4xl font-bold tracking-tight text-[#33292c] sm:mt-5 sm:text-6xl lg:mt-6">
-                  <span className="block">Why Choose</span>
-                  <span className="block text-accent-teal">Aurora?</span>
+                  <span className="block">Aurarora</span>
+                  <span className="block text-accent-teal">Your Personal Therapist & Companion</span>
                 </h1>
                 <p className="mt-3 text-base text-[#81635d] sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
                   Your personal AI companion combines emotional intelligence with professional expertise for meaningful, supportive conversations.
@@ -377,20 +378,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Call to Action Section */}
+      </div>      {/* Call to Action Section */}
       <div className="bg-white rounded-2xl shadow-lg py-16 px-6 mx-auto max-w-3xl text-center mt-16 mb-12">
-        <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm">Call Me</span>
-        <h2 className="mt-2 text-3xl font-bold text-black">Having a Hard Time? Let's Talk!</h2>
-        <p className="mt-4 text-lg text-[#33292c]">Reach out for support, guidance, or just a listening ear. Aurora is here for you, every step of the way.</p>
-        <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-          <a href="tel:+1234567890" className="px-6 py-3 rounded-lg bg-accent-teal text-white font-semibold hover:bg-accent-teal/90 transition">Call Me Back</a>
-          <a href="mailto:support@aurora.com" className="px-6 py-3 rounded-lg border border-accent-teal text-accent-teal font-semibold hover:bg-accent-teal/10 transition">Learn More</a>
+        <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm">Create Your Personal AI Companion</span>
+        <h2 className="mt-2 text-3xl font-bold text-black">Ready for a Companion That Truly Gets You?</h2>
+        <p className="mt-4 text-lg text-[#33292c]">
+          Tell us about yourself, and we'll customize an AI companion that resonates with your personality, understands your needs, and supports your unique journey.
+        </p>
+        <div className="mt-8 max-w-xl mx-auto">
+          <ContactForm />
         </div>
-        <div className="mt-8 text-[#33292c] pb-4">
-          <span className="font-semibold">Contact:</span> <a href="tel:+1234567890" className="text-accent-teal hover:underline">+1 (234) 567-890</a> &nbsp;|&nbsp; <a href="mailto:support@aurora.com" className="text-accent-teal hover:underline">support@aurora.com</a>
-        </div>
+        <p className="mt-6 text-sm text-[#81635d]">
+          Your information is secure and confidential. We typically respond within 24 hours.
+        </p>
       </div>
 
       {/* Blog Section */}

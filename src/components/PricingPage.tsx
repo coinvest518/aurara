@@ -5,7 +5,7 @@ import { Check } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { supabase } from "../supabaseClient"
 
-const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/5kQ28r7E64YGcdlazSew80e"
+const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/5kQ28r7E64YGcdlazSew80e?success_url=https://www.aurarora.life/success&cancel_url=https://www.aurarora.life/cancel"
 
 const plans = [
 	{

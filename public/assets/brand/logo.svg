@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="100" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    .logo-text { font-family: 'Arial', sans-serif; font-size: 48px; font-weight: bold; fill: #333; }
+    .stars { fill: #6B46C1; }
+    .lines { stroke: #805AD5; stroke-width: 1; stroke-dasharray: 4,4; opacity: 0.6; }
+  </style>
+  <g transform="translate(50, 60)">
+    <!-- Stars and sparkles -->
+    <g class="stars">
+      <path d="M250 -20 l2 2 l-2 2 l-2 -2z"/>
+      <path d="M260 -15 l3 0 l0 3 l-3 0z"/>
+      <path d="M270 -25 l2 2 l-2 2 l-2 -2z"/>
+      <path d="M280 -10 l2 0 l0 2 l-2 0z"/>
+      <!-- Add more stars as needed -->
+    </g>
+    <!-- Connecting lines -->
+    <g class="lines">
+      <path d="M250 -20 Q270 -30 290 -15"/>
+      <path d="M260 -15 Q275 -20 285 -10"/>
+      <!-- Add more lines as needed -->
+    </g>
+    <!-- Logo text -->
+    <text x="0" y="0" class="logo-text">AURARORA</text>
+  </g>
+</svg>
