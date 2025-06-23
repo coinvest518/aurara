@@ -22,7 +22,7 @@ interface TherapyPersona {
 const therapyPersonas: TherapyPersona[] = [
   {
     id: "1",
-    name: "Dr. Sarah Chen",
+    name: "Charlie",
     title: "Licensed Clinical Psychologist",
     specialty: "Anxiety & Depression",
     experience: "8 years",
@@ -37,7 +37,7 @@ const therapyPersonas: TherapyPersona[] = [
   },
   {
     id: "2",
-    name: "Dr. Michael Rodriguez",
+    name: "Sarah",
     title: "Marriage & Family Therapist",
     specialty: "Couples & Family Therapy",
     experience: "12 years",
@@ -52,7 +52,7 @@ const therapyPersonas: TherapyPersona[] = [
   },
   {
     id: "3",
-    name: "Dr. Emily Johnson",
+    name: "Lovinka",
     title: "Trauma Specialist",
     specialty: "PTSD & Trauma Recovery",
     experience: "10 years",
@@ -67,7 +67,7 @@ const therapyPersonas: TherapyPersona[] = [
   },
   {
     id: "4",
-    name: "Dr. James Park",
+    name: "Danny",
     title: "Addiction Counselor",
     specialty: "Substance Abuse & Recovery",
     experience: "15 years",
@@ -82,7 +82,7 @@ const therapyPersonas: TherapyPersona[] = [
   },
   {
     id: "5",
-    name: "Dr. Lisa Thompson",
+    name: "Rose",
     title: "Child Psychologist",
     specialty: "Child & Adolescent Therapy",
     experience: "9 years",
