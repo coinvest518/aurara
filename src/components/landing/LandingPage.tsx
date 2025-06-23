@@ -174,6 +174,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
             </div>
           </div>
         </div>
+        {/* Bolt Badge Section */}
+        <div className="absolute top-4 right-4">
+          <a
+            href="https://bolt.new/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 p-2 bg-white rounded-lg shadow-md hover:shadow-lg transition-all"
+          >
+            <img
+              src="/assets/brand/bolt-badge.png"
+              alt="Built on Bolt"
+              className="w-20 h-20"
+            />
+          </a>
+        </div>
       </div>
       {/* Features Section */}
       <div className="bg-[#f6efef] py-16">

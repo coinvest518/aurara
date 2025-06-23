@@ -82,13 +82,13 @@ const therapyPersonas: TherapyPersona[] = [
   },
   {
     id: "5",
-    name: "Rose",
+    name: "Kiki",
     title: "Child Psychologist",
     specialty: "Child & Adolescent Therapy",
     experience: "9 years",
     rating: 4.8,
     sessions: 1400,
-    image: "/assets/avatars/Rose.png",
+    image: "/assets/avatars/Kiki.png",
     description:
       "Creating a safe, playful environment where children and teens can express themselves and develop healthy coping skills.",
     approach: ["Play Therapy", "Art Therapy", "CBT for Kids"],
