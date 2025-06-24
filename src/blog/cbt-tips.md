@@ -23,4 +23,4 @@ Plan small enjoyable activities each day, even if you don’t feel like it. Posi
 
 ---
 
-**Remember:** CBT is most effective when practiced regularly. If you’re struggling, consider reaching out to a mental health professional or using Aurora’s guided self-discovery tools.
+**Remember:** CBT is most effective when practiced regularly. If you’re struggling, consider reaching out to a mental health professional or using Aurarora’s guided self-discovery tools.

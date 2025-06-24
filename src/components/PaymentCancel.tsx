@@ -25,7 +25,7 @@ export default function PaymentCancel() {
           <div className="bg-gray-50 rounded-xl p-6 mb-6">
             <h3 className="font-semibold text-gray-900 mb-4">Need help choosing?</h3>
             <ul className="text-left space-y-2 text-sm text-gray-600">
-              <li>• Start with our free plan to try Aurora</li>
+              <li>• Start with our free plan to try Aurarora</li>
               <li>• Compare features to find the right fit</li>
               <li>• Contact support if you have questions</li>
             </ul>
@@ -50,7 +50,7 @@ export default function PaymentCancel() {
 
           {/* Support Info */}
           <p className="text-sm text-gray-500 mt-6">
-            Questions? Contact us at support@aurarora.life
+            Questions? Contact us at support <a href="mailto:info@disputeai.xyz">Email</a>
           </p>
         </div>
       </div>

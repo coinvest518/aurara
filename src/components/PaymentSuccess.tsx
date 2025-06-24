@@ -133,7 +133,7 @@ export default function PaymentSuccess({ onSuccess }: PaymentSuccessProps) {
 
           {/* Success Message */}
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            Welcome to Aurora {currentPlan?.name}!
+            Welcome to Aurarora {currentPlan?.name}!
           </h1>
           <p className="text-gray-600 mb-6">
             Your subscription has been activated successfully.

@@ -66,7 +66,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <Brain className="h-6 w-6 text-white" />
               </div>
             </Link>
-            <span className="text-xl font-semibold text-[#33292c]">Aurora - AI Companion</span>
+            <span className="text-xl font-semibold text-[#33292c]">Aurarora</span>
           </div>
           <div className="flex items-center space-x-6">
             <Link to="/" className={`hover:underline font-medium ${location.pathname === '/' ? 'text-accent-teal' : ''}`}>Home</Link>
@@ -164,7 +164,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <footer className="bg-white/80 backdrop-blur-sm mt-auto">
         <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-gray-500">
-            © 2025 Aurora AI. All rights reserved.
+            © 2025 Aurarora AI. All rights reserved.
           </p>
         </div>
       </footer>

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide explains how to set up and use Stripe payment links with Aurora AI. The integration includes:
+This guide explains how to set up and use Stripe payment links with Aurarora AI. The integration includes:
 
 - Stripe payment links for subscriptions
 - Success/cancel redirect handling

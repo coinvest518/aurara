@@ -21,7 +21,7 @@ const plans: Array<{
 	{
 		name: "Basic",
 		priceMonthly: 50,
-		description: "Basic access to Aurora features with extra perks.",
+		description: "Basic access to Aurarora features with extra perks.",
 		features: [
 			"10 text/video AI sessions per month",
 			"Advanced mood tracker",

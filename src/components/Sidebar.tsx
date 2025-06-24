@@ -44,7 +44,7 @@ const Sidebar: React.FC<SidebarProps> = ({ personas, selectedPersonaId, onSelect
     ">
     {/* Fixed header */}
     <div className="p-6 font-bold text-xl text-blue-700 border-b shrink-0 text-center sm:text-left">
-      Aurora AI
+      Aurarora AI
     </div>
     {/* Start Conversation Button */}
     <div className="p-4">
@@ -92,7 +92,7 @@ const Sidebar: React.FC<SidebarProps> = ({ personas, selectedPersonaId, onSelect
     </div>
     {/* Fixed footer */}
     <div className="p-4 border-t text-xs text-slate-500 shrink-0 text-center sm:text-left">
-      © {new Date().getFullYear()} Aurora
+      © {new Date().getFullYear()} Aurarora
     </div>
     {/* Custom scrollbar styling */}
     <style>

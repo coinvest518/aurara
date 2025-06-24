@@ -109,8 +109,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
             >
               <div className="lg:py-24">
                 <h1 className="mt-4 text-4xl font-bold tracking-tight text-[#33292c] sm:mt-5 sm:text-6xl lg:mt-6">
-                  <span className="block">Aurarora</span>
-                  <span className="block text-accent-teal">Your Personal Therapist & Companion</span>
+                  <span className="block text-accent-teal">The Friend Who Listens. The Therapist Who Understands.</span>
                 </h1>
                 <p className="mt-3 text-base text-[#81635d] sm:mt-5 sm:text-xl lg:text-lg xl:text-xl">
                   Your personal AI companion combines emotional intelligence with professional expertise for meaningful, supportive conversations.
@@ -163,7 +162,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
                       size="lg"
                       className="mx-auto mb-8"
                       isVideoAvatar={true}
-                      alt="Aurora AI Video Avatar"
+                      alt="Aurarora AI Video Avatar"
                     />
                     <div className="bg-white rounded-2xl shadow-lg p-6 mt-4 text-black">
                       <CheckInSection />

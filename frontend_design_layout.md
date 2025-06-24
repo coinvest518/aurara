@@ -1,7 +1,7 @@
 # Frontend Design and Layout Documentation
 
 ## Overview
-This document captures the design and layout principles for the Aurora AI Companion frontend. It serves as a reference to ensure consistency and to document what is working well.
+This document captures the design and layout principles for the Aurarora AI Companion frontend. It serves as a reference to ensure consistency and to document what is working well.
 
 ---
 

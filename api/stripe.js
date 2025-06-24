@@ -1,4 +1,4 @@
-// Stripe backend integration for Aurora AI app
+// Stripe backend integration for Aurarora AI app
 // Place this file in /api/stripe.js (Node/Express style, can be adapted for serverless)
 
 const express = require('express');
