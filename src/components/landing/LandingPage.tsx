@@ -355,7 +355,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
             <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm mb-2">Watch How Aurora Works</span>
             <div className="w-full max-w-md rounded-2xl overflow-hidden shadow-xl bg-black">
               <video controls poster="/assets/Rose.png" className="w-full h-64 object-cover">
-                <source src="/assets/avatars/talkingai.mp4" type="video/mp4" />
+                <source src="/assets/avatars/Aura1.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
