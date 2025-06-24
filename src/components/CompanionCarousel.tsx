@@ -16,7 +16,6 @@ interface TherapyPersona {
   description: string;
   approach: string[];
   availability: string;
-  price: string;
 }
 
 const therapyPersonas: TherapyPersona[] = [
@@ -32,8 +31,7 @@ const therapyPersonas: TherapyPersona[] = [
     description:
       "Specializing in cognitive behavioral therapy with a warm, empathetic approach. I help clients develop practical coping strategies for anxiety and depression.",
     approach: ["CBT", "Mindfulness", "Solution-Focused"],
-    availability: "Mon-Fri, 9AM-6PM",
-    price: "$120/session",
+    availability: "24/7 Available",
   },
   {
     id: "2",
@@ -47,8 +45,7 @@ const therapyPersonas: TherapyPersona[] = [
     description:
       "Helping couples and families build stronger relationships through evidence-based therapeutic techniques and compassionate guidance.",
     approach: ["EFT", "Gottman Method", "Family Systems"],
-    availability: "Tue-Sat, 10AM-8PM",
-    price: "$150/session",
+    availability: "24/7 Available",
   },
   {
     id: "3",
@@ -62,8 +59,7 @@ const therapyPersonas: TherapyPersona[] = [
     description:
       "Specialized in trauma-informed care using EMDR and somatic approaches to help clients heal from traumatic experiences.",
     approach: ["EMDR", "Somatic Therapy", "CPT"],
-    availability: "Mon-Thu, 11AM-7PM",
-    price: "$140/session",
+    availability: "24/7 Available",
   },
   {
     id: "4",
@@ -77,8 +73,7 @@ const therapyPersonas: TherapyPersona[] = [
     description:
       "Supporting individuals on their recovery journey with personalized treatment plans and ongoing support for lasting sobriety.",
     approach: ["12-Step", "Motivational Interviewing", "Relapse Prevention"],
-    availability: "Mon-Fri, 8AM-5PM",
-    price: "$110/session",
+    availability: "24/7 Available",
   },
   {
     id: "5",
@@ -92,8 +87,7 @@ const therapyPersonas: TherapyPersona[] = [
     description:
       "Creating a safe, playful environment where children and teens can express themselves and develop healthy coping skills.",
     approach: ["Play Therapy", "Art Therapy", "CBT for Kids"],
-    availability: "Mon-Fri, 3PM-7PM",
-    price: "$100/session",
+    availability: "24/7 Available",
   },
 ];
 
@@ -165,8 +159,7 @@ export default function CompanionCarousel({ onClose }: CompanionCarouselProps) {
                       {persona.sessions}+ sessions
                     </div>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-semibold text-lg">{persona.price}</span>
+                  <div className="flex items-center justify-end">
                     <button className="px-3 py-1 rounded bg-accent-teal text-white font-semibold hover:bg-accent-teal/90 text-xs">View Profile</button>
                   </div>
                 </div>
@@ -250,16 +243,6 @@ export default function CompanionCarousel({ onClose }: CompanionCarouselProps) {
                   <div>
                     <h3 className="font-semibold mb-2">Availability</h3>
                     <p className="text-muted-foreground">{selectedPersona.availability}</p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between pt-4 border-t">
-                  <div>
-                    <span className="text-2xl font-bold">{selectedPersona.price}</span>
-                    <p className="text-sm text-muted-foreground">per session</p>
-                  </div>
-                  <div className="flex gap-3">
-                    <button className="px-4 py-2 rounded border border-accent-teal text-accent-teal font-semibold hover:bg-accent-teal/10">Message</button>
-                    <button className="px-4 py-2 rounded bg-accent-teal text-white font-semibold hover:bg-accent-teal/90">Book Session</button>
                   </div>
                 </div>
               </div>
