@@ -87,7 +87,10 @@ export function useSubscription() {
     if (!hasActiveSubscription && currentPlan === 'free') {
       switch (feature) {
         case 'video_session':
-          return currentUsage.videoSessions < planLimits.monthlyVideoSessions;
+          return (
+            currentUsage.videoSessions < planLimits.monthlyVideoSessions &&
+            currentUsage.videoSessions * 15 < 30 // Enforce 2 x 15-minute sessions
+          );
         case 'unlimited_chats':
           return currentUsage.textSessions < planLimits.monthlyTextSessions;
         default:

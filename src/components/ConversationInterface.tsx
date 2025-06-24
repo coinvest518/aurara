@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, Send, Pause, Play, RotateCcw } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useSubscription } from '../hooks/useSubscription';
 
 interface Message {
   id: string;
@@ -23,6 +25,9 @@ export const ConversationInterface: React.FC<ConversationInterfaceProps> = ({
   onRestart,
   onSessionEnd,
 }) => {
+  const { canUseFeature } = useSubscription();
+  const navigate = useNavigate();
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -49,6 +54,12 @@ export const ConversationInterface: React.FC<ConversationInterfaceProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isActive]);
+
+  useEffect(() => {
+    if (isActive && !canUseFeature('video_session')) {
+      navigate('/pricing'); // Redirect to pricing page if session limit is exceeded
+    }
+  }, [isActive, canUseFeature, navigate]);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
