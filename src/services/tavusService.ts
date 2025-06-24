@@ -115,6 +115,20 @@ class TavusService {
         system_prompt: 'You are Rose, a thoughtful and encouraging AI persona.',
         default_replica_id: 'r90105daccb4',
         context: 'Rose persona for positive support and motivation'
+      },
+      {
+        persona_id: 'p0066621812a',
+        persona_name: 'Kiki',
+        system_prompt: 'You are Kiki, a thoughtful and encouraging Homegirl.',
+        default_replica_id: 'r5a93231d122',
+        context: 'Rose persona for positive support and motivation'
+      },
+       {
+        persona_id: 'pabbaa4a7bc2',
+        persona_name: 'Mark',
+        system_prompt: 'Im Mark you addiction specialist, I can help you with addiction recovery and support.',
+        default_replica_id: 'r92debe21318',
+        context: 'Mark persona for addiction recovery and support'
       }
     ];
   }

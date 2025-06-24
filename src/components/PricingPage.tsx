@@ -7,18 +7,31 @@ import { supabase } from "../supabaseClient"
 
 const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/5kQ28r7E64YGcdlazSew80e?success_url=https://www.aurarora.life/success&cancel_url=https://www.aurarora.life/cancel"
 
-const plans = [
+const plans: Array<{
+	name: string;
+	priceMonthly: number;
+	description: string;
+	features: string[];
+	cta: string;
+	highlight: boolean;
+	paymentLink: string;
+	badge?: string;
+	disabled?: boolean;
+}> = [
 	{
-		name: "Free",
-		priceMonthly: 0,
-		description: "Basic access to Aurora features.",
+		name: "Basic",
+		priceMonthly: 50,
+		description: "Basic access to Aurora features with extra perks.",
 		features: [
-			"5 text/video AI sessions per month",
-			"Basic mood tracker",
-			"Limited chat access & support",
+			"10 text/video AI sessions per month",
+			"Advanced mood tracker",
+			"Priority email support",
+			"Access to exclusive content",
+			"Early access to new features",
 		],
-		cta: "Current Plan",
+		cta: "Subscribe Now",
 		highlight: false,
+		paymentLink: "https://buy.stripe.com/8x28wP5vYcr8elt6jCew80g",
 	},
 	{
 		name: "Essentials",
@@ -37,8 +50,8 @@ const plans = [
 		badge: "Most Popular",
 	},
 	{
-		name: "Pro",
-		priceMonthly: 19.99,
+		name: "Premium",
+		priceMonthly: 191.99,
 		description:
 			"Full access, advanced analytics, and priority support.",
 		features: [
@@ -47,9 +60,9 @@ const plans = [
 			"Advanced analytics & history view",
 			"Priority support",
 		],
-		cta: "Coming Soon",
+		cta: "Subscribe Now",
 		highlight: false,
-		disabled: true,
+		paymentLink: "https://buy.stripe.com/cNidR93nQ9eWcdl6jCew80h",
 	},
 ]
 
@@ -74,6 +87,10 @@ export default function PricingPage() {
 		}
 	};
 
+	const handleBack = () => {
+		navigate(-1); // Navigate to the previous page
+	};
+
 	return (
 		<div className="min-h-screen bg-gray-50 py-20">
 			<div className="w-full max-w-6xl mx-auto px-4">
@@ -84,6 +101,31 @@ export default function PricingPage() {
 					<p className="text-xl text-gray-600">
 						Choose the plan that best fits your needs.
 					</p>
+				</div>
+
+				{/* Back Button */}
+				<div className="text-center mb-8">
+					<button
+						onClick={handleBack}
+						className="inline-flex items-center justify-center px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 transition-all duration-200"
+					>
+						<svg
+							className="w-4 h-4 mr-2 -ml-1"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							strokeWidth={2}
+							stroke="currentColor"
+							aria-hidden="true"
+						>
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								d="M15 12H3m0 0l9-9m-9 9l9 9"
+							/>
+						</svg>
+						Back
+					</button>
 				</div>
 
 				{/* Pricing Cards */}

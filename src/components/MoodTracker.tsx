@@ -1,4 +1,5 @@
 import React from 'react';
+import confetti from 'canvas-confetti';
 
 const moods = [
   { key: 'happy', label: 'Happy', emoji: '😊', color: 'bg-emerald-400' },
@@ -26,7 +27,14 @@ export const MoodTracker: React.FC<MoodTrackerProps> = ({ selectedMood, onSelect
       <button
         key={mood.key}
         className={`group flex flex-col items-center focus:outline-none`}
-        onClick={() => onSelectMood(mood.key)}
+        onClick={() => {
+          onSelectMood(mood.key);
+          confetti({
+            particleCount: 100,
+            spread: 70,
+            origin: { y: 0.6 },
+          });
+        }}
         type="button"
       >
         <div className={`h-12 w-12 rounded-full flex items-center justify-center text-2xl transition-transform border-2 ${mood.color} ${selectedMood === mood.key ? 'scale-110 border-black shadow-lg' : 'border-transparent opacity-80 group-hover:opacity-100'}`}>

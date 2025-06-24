@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Video, VideoOff, Mic, MicOff, Phone, PhoneOff, Settings, Maximize2 } from 'lucide-react';
+import { Video, VideoOff, Mic, MicOff, PhoneOff, Settings, Maximize2 } from 'lucide-react';
 
 interface VideoAgentProps {
   isConnected: boolean;

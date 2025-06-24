@@ -48,6 +48,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // Add logout button to the header
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/'; // Redirect to landing page after logout
+  };
+
   return (
     <div className="min-h-screen bg-[#f6efef] text-[#33292c] flex flex-col">
       {/* Header / Navigation */}
@@ -81,6 +87,13 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   className="relative h-8 w-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
                 >
                   <Settings className="h-4 w-4 text-gray-600" />
+                </button>
+                {/* Logout button */}
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                >
+                  Logout
                 </button>
               </>
             )}
