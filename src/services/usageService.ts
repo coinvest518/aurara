@@ -10,17 +10,20 @@ export interface UserUsage {
   month: string;  // YYYY-MM format
   created_at: string;
   updated_at: string;
+  total_sessions?: number; // New field for total sessions
 }
 
 export interface PlanLimits {
   video_sessions: number;
   text_sessions: number;
+  total_free_sessions?: number; // Total free sessions limit for free plan
 }
 
 export const PLAN_LIMITS: Record<UserSubscription['subscription_type'], PlanLimits> = {
   free: {
     video_sessions: 2, // Only 2 free sessions
-    text_sessions: 0
+    text_sessions: 0,
+    total_free_sessions: 15 // Total free sessions limit
   },
   essentials: {
     video_sessions: 15,
@@ -37,26 +40,37 @@ export class UsageService {
     try {
       const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
       
-      const { data, error } = await supabase
+      // Get current month's usage
+      const { data: currentUsage, error } = await supabase
         .from('user_usage')
         .select('*')
         .eq('user_id', userId)
         .eq('month', currentMonth)
         .single();
 
-      if (error) {
-        // If not found, auto-create usage row for this user/month
-        if (error.code === 'PGRST116' || error.message?.toLowerCase().includes('no rows')) {
-          const newUsage = await this.initializeMonthlyUsage(userId);
-          return newUsage;
-        }
-        console.error('Error fetching usage:', error);
+      // Get total sessions across all time
+      const { count: totalSessions } = await supabase
+        .from('user_usage')
+        .select('*', { count: 'exact' })
+        .eq('user_id', userId);
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+        console.error('Error getting current usage:', error);
         return null;
       }
 
-      return data as UserUsage;
+      return {
+        id: currentUsage?.id || '',
+        user_id: userId,
+        video_sessions: currentUsage?.video_sessions || 0,
+        text_sessions: currentUsage?.text_sessions || 0,
+        month: currentMonth,
+        total_sessions: totalSessions || 0,
+        created_at: currentUsage?.created_at || new Date().toISOString(),
+        updated_at: currentUsage?.updated_at || new Date().toISOString()
+      };
     } catch (error) {
-      console.error('Unexpected error fetching usage:', error);
+      console.error('Error in getCurrentUsage:', error);
       return null;
     }
   }
@@ -121,15 +135,20 @@ export class UsageService {
   static async canStartSession(userId: string, sessionType: 'video' | 'text'): Promise<boolean> {
     try {
       const usage = await this.getCurrentUsage(userId);
-      if (!usage) return true; // First session of the month
+      if (!usage) return true; // First session
 
       const { data: subscription } = await SubscriptionService.getUserSubscription(userId);
-      const userPlan = subscription && 'plan_type' in subscription && subscription.plan_type ? subscription.plan_type : 'free';
-      const plan = userPlan as UserSubscription['subscription_type'];
-      const limits = PLAN_LIMITS[plan];
+      const userPlan = (subscription?.plan || 'free') as 'free' | 'essentials' | 'pro';
+      const limits = PLAN_LIMITS[userPlan];
 
-      if (limits[`${sessionType}_sessions`] === -1) return true; // Unlimited plan
-      
+      // Check total free sessions limit for free plan
+      const totalSessions = usage.total_sessions || 0;
+      if (userPlan === 'free' && totalSessions >= (limits.total_free_sessions || 15)) {
+        return false;
+      }
+
+      // Check monthly limit
+      if (limits[`${sessionType}_sessions`] === -1) return true; // Unlimited
       return usage[`${sessionType}_sessions`] < limits[`${sessionType}_sessions`];
     } catch (error) {
       console.error('Error checking session availability:', error);
@@ -141,8 +160,7 @@ export class UsageService {
     try {
       const usage = await this.getCurrentUsage(userId);
       const { data: subscription } = await SubscriptionService.getUserSubscription(userId);
-      const userPlan = subscription && 'plan_type' in subscription && subscription.plan_type ? subscription.plan_type : 'free';
-      const plan = userPlan as UserSubscription['subscription_type'];
+      const plan = (subscription?.plan || 'free') as 'free' | 'essentials' | 'pro';
       const limits = PLAN_LIMITS[plan];
       const limit = limits[`${sessionType}_sessions`];
       const currentUsage = usage ? usage[`${sessionType}_sessions`] : 0;

@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
-import { ChevronRight, ChevronDown, Activity, Music2, Brain, LineChart } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronRight, ChevronDown, Activity, Music2, Brain, LineChart, AlertCircle } from 'lucide-react';
 import { UsageStats } from './UsageStats';
+import { UsageService, PLAN_LIMITS } from '../services/usageService';
+import type { UserSubscription } from '../types/subscription';
+import type { MoodHistoryItem } from '../services/moodService';
 
 interface RightSidebarProps {
-  moodHistory: { id: string; start_time: string; mood: string }[];
-  selectedMood: string;
+  moodHistory: MoodHistoryItem[];
+  selectedMood: 'happy' | 'motivated' | 'stressed' | 'sad' | 'tired';
   user?: { id: string } | null;
   isLoading?: boolean;
   hasError?: boolean;
+}
+
+interface SessionStats {
+  totalSessions: number;
+  remainingSessions: number;
+  videoSessions: number;
+  textSessions: number;
+  plan: UserSubscription['subscription_type'];
 }
 
 interface Section {
@@ -50,7 +61,47 @@ const SECTIONS: Section[] = [
 
 const RightSidebar: React.FC<RightSidebarProps> = ({ moodHistory, selectedMood, user, isLoading = false, hasError = false }) => {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['widgets']));
+  const [sessionStats, setSessionStats] = useState<SessionStats | null>(null);
+  const [loadingStats, setLoadingStats] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
+  // Load session stats
+  useEffect(() => {
+    const loadSessionStats = async () => {
+      if (!user) return;
+      
+      try {
+        setLoadingStats(true);
+        setError(null);
+        const currentUsage = await UsageService.getCurrentUsage(user.id);
+        
+        if (currentUsage) {
+          setSessionStats({
+            totalSessions: currentUsage.total_sessions || 0,
+            remainingSessions: Math.max(0, PLAN_LIMITS.free.total_free_sessions || 15 - (currentUsage.total_sessions || 0)),
+            videoSessions: currentUsage.video_sessions,
+            textSessions: currentUsage.text_sessions,
+            plan: 'free' // Default to free plan
+          });
+        }
+      } catch (error) {
+        console.error('Error loading session stats:', error);
+        setError('Failed to load session statistics');
+      } finally {
+        setLoadingStats(false);
+      }
+    };
+
+    loadSessionStats();
+  }, [user]);
+
+  // Track external error and loading states
+  useEffect(() => {
+    if (hasError) {
+      setError('Failed to load mood history data');
+    }
+  }, [hasError]);
+
   const toggleSection = (key: string) => {
     const newSections = new Set(expandedSections);
     if (newSections.has(key)) {
@@ -59,6 +110,18 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ moodHistory, selectedMood, 
       newSections.add(key);
     }
     setExpandedSections(newSections);
+  };
+
+  // Progress calculation
+  const calculateProgress = () => {
+    if (!sessionStats) return 0;
+    const freeLimit = PLAN_LIMITS.free.total_free_sessions || 15;
+    return Math.min(100, (sessionStats.totalSessions / freeLimit) * 100);
+  };
+
+  const calculateMoodProgress = () => {
+    if (!moodHistory.length) return 0;
+    return Math.min(100, (moodHistory.length / 15) * 100);
   };
 
   return (
@@ -74,14 +137,40 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ moodHistory, selectedMood, 
         )}
       </div>
 
-      {/* Show usage stats if user is logged in */}
-      {user && (
+      {/* Status section */}
+      {(isLoading || loadingStats) && (
+        <div className="px-4 py-3 border-b">
+          <div className="animate-pulse space-y-2">
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          </div>
+        </div>
+      )}
+      {error && (
+        <div className="px-4 py-3 border-b">
+          <div className="flex items-center space-x-2 text-red-600">
+            <AlertCircle className="w-4 h-4" />
+            <span className="text-sm">{error}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Show usage stats if user is logged in and no errors */}
+      {user && !isLoading && !loadingStats && !error && !hasError && (
         <div className="px-4 py-3 border-b">
           <UsageStats userId={user.id} />
         </div>
       )}
+      {error && (
+        <div className="px-4 py-3 border-b text-red-600 bg-red-50">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-5 h-5" />
+            <span className="text-sm">{error}</span>
+          </div>
+        </div>
+      )}
 
-      {/* Collapsible widget sections only, no tab bar */}
+      {/* Collapsible widget sections */}
       <div className="flex-1 overflow-y-auto">
         <div className="p-3 space-y-1">
           {SECTIONS.map(section => (
@@ -99,123 +188,105 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ moodHistory, selectedMood, 
                 <span className="font-medium">{section.label}</span>
               </button>
 
-              {/* Section Content */}
+              {/* Section content */}
               {expandedSections.has(section.key) && (
-                <div className="ml-4 mt-2 space-y-3 animate-fadeIn">
+                <div className="mt-2 px-3 pb-3">
                   {section.key === 'widgets' && (
-                    <>
-                      <div className={`${section.color.bg} rounded-lg p-3 shadow-sm`}>
-                        <h4 className="font-medium text-sm mb-2">Quick Stats</h4>
-                        <ul className="text-xs space-y-1.5">
-                          <li className="flex justify-between">
-                            <span>Total Conversations</span>
-                            {isLoading ? (
-                              <span className="animate-pulse w-4 h-4 bg-gray-200 rounded"></span>
-                            ) : (
-                              <span className="font-semibold">{moodHistory.length}</span>
+                    <div className="space-y-4">
+                      {/* Quick Stats */}
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <h3 className="text-sm font-semibold text-gray-800 mb-3">Quick Stats</h3>
+                        {(isLoading || loadingStats) ? (
+                          <div className="animate-pulse space-y-2">
+                            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                          </div>
+                        ) : sessionStats ? (
+                          <div className="space-y-2 text-sm">
+                            <p className="text-gray-600">Total Sessions: {sessionStats.totalSessions}</p>
+                            <p className="text-gray-600">Video Sessions: {sessionStats.videoSessions}</p>
+                            <p className="text-gray-600">Text Sessions: {sessionStats.textSessions}</p>
+                            <p className="text-gray-600">Current Mood: {selectedMood}</p>
+                            <p className="text-gray-600">Mood Entries: {moodHistory.length}</p>
+                            {sessionStats.plan === 'free' && (
+                              <div className="mt-2">
+                                <p className="text-gray-600">Remaining Free Sessions: {sessionStats.remainingSessions}</p>
+                                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                                  <div
+                                    className={`rounded-full h-2 ${
+                                      calculateProgress() > 90 ? 'bg-red-500' : 'bg-blue-500'
+                                    }`}
+                                    style={{ width: `${calculateProgress()}%` }}
+                                  />
+                                </div>
+                              </div>
                             )}
-                          </li>
-                          <li className="flex justify-between">
-                            <span>Current Mood</span>
-                            <span className="font-semibold capitalize">{selectedMood}</span>
-                          </li>
-                        </ul>
+                          </div>
+                        ) : null}
                       </div>
-                      <div className="bg-white rounded-lg p-3 shadow-sm border">
-                        <h4 className="font-medium text-sm text-slate-800 mb-1">Daily Tip</h4>
-                        <p className="text-xs text-slate-600">Track your mood patterns to gain better insights into your emotional well-being.</p>
-                      </div>
-                    </>
-                  )}
 
-                  {section.key === 'music' && (
-                    <div className={`${section.color.bg} rounded-lg p-3 shadow-sm`}>
-                      <h4 className="font-medium text-sm mb-2">Focus Music</h4>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between text-xs p-2 bg-white/50 rounded">
-                          <span>Deep Focus Mix</span>
-                          <button className="px-2 py-1 rounded bg-purple-100 text-purple-700 hover:bg-purple-200">
-                            Play
-                          </button>
+                      {/* Mood History */}
+                      {moodHistory.length > 0 && (
+                        <div className="bg-white rounded-lg p-4 shadow-sm">
+                          <h3 className="text-sm font-semibold text-gray-800 mb-3">Recent Moods</h3>
+                          <div className="space-y-2">
+                            {moodHistory.slice(-3).map((entry) => (
+                              <div key={entry.id} className="text-sm text-gray-600 flex justify-between">
+                                <span>{entry.mood}</span>
+                                <span>{new Date(entry.start_time).toLocaleDateString()}</span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
-                        <div className="flex items-center justify-between text-xs p-2 bg-white/50 rounded">
-                          <span>Calm Meditation</span>
-                          <button className="px-2 py-1 rounded bg-purple-100 text-purple-700 hover:bg-purple-200">
-                            Play
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {section.key === 'exercises' && (
-                    <div className={`${section.color.bg} rounded-lg p-3 shadow-sm`}>
-                      <h4 className="font-medium text-sm mb-2">Today's Exercises</h4>
-                      <div className="space-y-2">
-                        <div className="text-xs p-2 bg-white/50 rounded">
-                          <div className="font-medium mb-1">Deep Breathing</div>
-                          <p className="text-slate-600">5 minutes of guided breathing exercise</p>
-                        </div>
-                        <div className="text-xs p-2 bg-white/50 rounded">
-                          <div className="font-medium mb-1">Mindfulness</div>
-                          <p className="text-slate-600">10 minutes meditation session</p>
-                        </div>
-                      </div>
+                      )}
                     </div>
                   )}
 
                   {section.key === 'progress' && (
-                    <div className={`${section.color.bg} rounded-lg p-3 shadow-sm`}>
-                      <h4 className="font-medium text-sm mb-3">Weekly Progress</h4>
-                      <div className="space-y-3">
-                        <div>
-                          <div className="flex justify-between text-xs mb-1">
-                            <span>Mood Check-ins</span>
-                            {isLoading ? (
-                              <span className="animate-pulse w-8 h-3 bg-amber-100 rounded"></span>
-                            ) : (
-                              <span>{Math.min(moodHistory.length * 10, 100)}%</span>
-                            )}
-                          </div>
-                          <div className="w-full bg-white/50 rounded-full h-2">
-                            {isLoading ? (
-                              <div className="animate-pulse bg-amber-200 h-2 rounded-full w-1/2"></div>
-                            ) : (
-                              <div
-                                className="bg-amber-500 h-2 rounded-full transition-all duration-500"
-                                style={{ width: `${Math.min(moodHistory.length * 10, 100)}%` }}
-                              />
-                            )}
+                    <div className="space-y-4">
+                      {/* Session Progress */}
+                      {!loadingStats && sessionStats && (
+                        <div className="bg-white rounded-lg p-4 shadow-sm">
+                          <h3 className="text-sm font-semibold text-gray-800 mb-3">Session Progress</h3>
+                          <div className="space-y-4">
+                            <div>
+                              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Total Sessions Used</span>
+                                <span>
+                                  {sessionStats.totalSessions} / {PLAN_LIMITS.free.total_free_sessions || 15}
+                                </span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div
+                                  className={`rounded-full h-2 ${
+                                    calculateProgress() > 90 ? 'bg-red-500' : 'bg-blue-500'
+                                  }`}
+                                  style={{ width: `${calculateProgress()}%` }}
+                                />
+                              </div>
+                            </div>
                           </div>
                         </div>
-                        <div className="text-xs space-y-1">
-                          {isLoading ? (
-                            <div className="flex justify-center p-3">
-                              <div className="animate-pulse flex space-x-2">
-                                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                              </div>
+                      )}
+
+                      {/* Mood Tracking Progress */}
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <h3 className="text-sm font-semibold text-gray-800 mb-3">Mood Tracking Progress</h3>
+                        <div className="space-y-4">
+                          <div>
+                            <div className="flex justify-between text-sm text-gray-600 mb-1">
+                              <span>Mood Entries</span>
+                              <span>{moodHistory.length} / 15</span>
                             </div>
-                          ) : hasError ? (
-                            <div className="text-center p-2 text-red-500 text-xs">
-                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                              Unable to load mood data
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div
+                                className={`rounded-full h-2 ${
+                                  calculateMoodProgress() > 90 ? 'bg-purple-500' : 'bg-purple-400'
+                                }`}
+                                style={{ width: `${calculateMoodProgress()}%` }}
+                              />
                             </div>
-                          ) : moodHistory.length > 0 ? (
-                            moodHistory.slice(-3).map(entry => (
-                              <div key={entry.id} className="flex justify-between p-1.5 bg-white/50 rounded">
-                                <span>{new Date(entry.start_time).toLocaleDateString()}</span>
-                                <span className="font-medium capitalize">{entry.mood}</span>
-                              </div>
-                            ))
-                          ) : (
-                            <div className="text-center p-2 text-gray-500">
-                              No mood data yet
-                            </div>
-                          )}
+                          </div>
                         </div>
                       </div>
                     </div>

@@ -14,11 +14,13 @@ export interface UsageLimit {
   hasUnlimitedChats: boolean;
   hasAdvancedAnalytics: boolean;
   hasPrioritySupport: boolean;
+  total_free_sessions?: number; // Total number of free sessions allowed
 }
 
 export interface SubscriptionUsage {
   textSessions: number;
   videoSessions: number;
+  totalSessions: number; // Total sessions used across all time
   lastSessionDate?: string;
 }
 
@@ -31,6 +33,7 @@ export const PLAN_LIMITS: Record<UserSubscription['subscription_type'], UsageLim
     hasUnlimitedChats: false,
     hasAdvancedAnalytics: false,
     hasPrioritySupport: false,
+    total_free_sessions: 15 // Maximum 15 free sessions total
   },
   essentials: {
     monthlyTextSessions: -1, // unlimited

@@ -13,7 +13,8 @@ export function useSubscription() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentUsage, setCurrentUsage] = useState<SubscriptionUsage>({
     textSessions: 0,
-    videoSessions: 0
+    videoSessions: 0,
+    totalSessions: 0
   });
 
   // Fetch subscription data
@@ -70,7 +71,8 @@ export function useSubscription() {
 
       setCurrentUsage({
         textSessions: textCount || 0,
-        videoSessions: videoCount || 0
+        videoSessions: videoCount || 0,
+        totalSessions: (textCount || 0) + (videoCount || 0)
       });
     }
 
