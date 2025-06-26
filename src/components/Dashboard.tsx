@@ -22,9 +22,13 @@ const Dashboard: React.FC = () => {
   const [selectedMood, setSelectedMood] = useState<MoodType>('happy');
   const [conversationStarted, setConversationStarted] = useState(false);
   const [moodHistory, setMoodHistory] = useState<MoodHistoryItem[]>([]);
+  const [isMoodHistoryLoading, setIsMoodHistoryLoading] = useState(false);
+  const [moodHistoryFetchFailed, setMoodHistoryFetchFailed] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
+  // Split the auth and mood history fetching into separate useEffects
   useEffect(() => {
+    // Only get auth session once when component mounts
     supabase.auth.getSession()
       .then(({ data: { session } }) => {
         setUser(session?.user ?? null);
@@ -34,16 +38,63 @@ const Dashboard: React.FC = () => {
         // Continue with null user
         setUser(null);
       });
+  }, []);
 
-    if (user) {
-      getMoodHistory(user.id)
-        .then((data) => setMoodHistory(data || []))
-        .catch(error => {
-          console.error("Error fetching mood history:", error);
-          setMoodHistory([]);
-        });
+  // Separate useEffect for mood history to avoid frequent retries
+  useEffect(() => {
+    // Only fetch mood history if we have a logged-in user
+    if (user?.id) {
+      // Create an AbortController to cancel fetch if component unmounts
+      const controller = new AbortController();
+      let isMounted = true;
+      
+      const fetchMoodHistory = async () => {
+        try {
+          // Only fetch if user has an ID and we're not already loading
+          if (!user.id) return;
+          
+          // Don't fetch again if we already have mood history data
+          if (moodHistory.length > 0) return;
+          
+          // Don't retry if previous attempt failed with network error
+          if (moodHistoryFetchFailed) return;
+          
+          // Set loading state
+          setIsMoodHistoryLoading(true);
+          setMoodHistoryFetchFailed(false);
+          
+          const data = await getMoodHistory(user.id, { signal: controller.signal });
+          // Only update state if component is still mounted
+          if (isMounted) {
+            setMoodHistory(data || []);
+            setIsMoodHistoryLoading(false);
+          }
+        } catch (error: any) {
+          // Only log once, not in a loop
+          if (isMounted) {
+            console.warn("Error fetching mood history, will not retry", error);
+            // Set empty array to prevent repeated retries
+            setMoodHistory([]);
+            setIsMoodHistoryLoading(false);
+            
+            // Mark as failed if it's a network error
+            if (error.message === 'TypeError: Failed to fetch' || 
+                (error.details && error.details.includes('Failed to fetch'))) {
+              setMoodHistoryFetchFailed(true);
+            }
+          }
+        }
+      };
+      
+      fetchMoodHistory();
+      
+      // Clean up function
+      return () => {
+        isMounted = false;
+        controller.abort();
+      };
     }
-  }, [user]);
+  }, [user?.id]); // Only re-run if user ID changes
 
   const handleStartConversation = async () => {
     if (!selectedPersonaId) {
@@ -111,14 +162,14 @@ const Dashboard: React.FC = () => {
       {/* Main Content */}
       <main className="flex-1 px-4 py-6 lg:px-8 min-h-screen overflow-y-auto">
         <div className="max-w-4xl mx-auto space-y-6">
-          {/* Mood summary */}
-          {moodHistory.length > 0 && (
+          {/* Mood summary - only show if user has mood history */}
+          {moodHistory && moodHistory.length > 0 && (
             <div className="mb-4 text-center text-slate-700">
-              Last mood: <span className="font-semibold">{moodHistory[moodHistory.length - 1].mood}</span>
+              Last mood: <span className="font-semibold">{moodHistory[moodHistory.length - 1]?.mood || 'No mood recorded'}</span>
             </div>
           )}
 
-          {/* MoodTracker */}
+          {/* MoodTracker - show for all users */}
           <div className="flex justify-center mb-6">
             <MoodTracker selectedMood={selectedMood} onSelectMood={setSelectedMood} />
           </div>
@@ -167,12 +218,13 @@ const Dashboard: React.FC = () => {
       <div
         id="rightSidebar"
         className="fixed lg:static inset-y-0 right-0 transform translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out lg:relative lg:flex w-80 max-w-full z-30"
-      >
-        <RightSidebar
-          moodHistory={moodHistory}
-          selectedMood={selectedMood}
-          user={user}
-        />
+      >      <RightSidebar
+        moodHistory={moodHistory}
+        selectedMood={selectedMood}
+        user={user}
+        isLoading={isMoodHistoryLoading}
+        hasError={moodHistoryFetchFailed}
+      />
       </div>
 
       {/* Toast Messages */}

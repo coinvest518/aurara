@@ -6,6 +6,8 @@ interface RightSidebarProps {
   moodHistory: { id: string; start_time: string; mood: string }[];
   selectedMood: string;
   user?: { id: string } | null;
+  isLoading?: boolean;
+  hasError?: boolean;
 }
 
 interface Section {
@@ -46,7 +48,7 @@ const SECTIONS: Section[] = [
   },
 ];
 
-const RightSidebar: React.FC<RightSidebarProps> = ({ moodHistory, selectedMood, user }) => {
+const RightSidebar: React.FC<RightSidebarProps> = ({ moodHistory, selectedMood, user, isLoading = false, hasError = false }) => {
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['widgets']));
   
   const toggleSection = (key: string) => {
@@ -107,7 +109,11 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ moodHistory, selectedMood, 
                         <ul className="text-xs space-y-1.5">
                           <li className="flex justify-between">
                             <span>Total Conversations</span>
-                            <span className="font-semibold">{moodHistory.length}</span>
+                            {isLoading ? (
+                              <span className="animate-pulse w-4 h-4 bg-gray-200 rounded"></span>
+                            ) : (
+                              <span className="font-semibold">{moodHistory.length}</span>
+                            )}
                           </li>
                           <li className="flex justify-between">
                             <span>Current Mood</span>
@@ -165,22 +171,51 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ moodHistory, selectedMood, 
                         <div>
                           <div className="flex justify-between text-xs mb-1">
                             <span>Mood Check-ins</span>
-                            <span>{Math.min(moodHistory.length * 10, 100)}%</span>
+                            {isLoading ? (
+                              <span className="animate-pulse w-8 h-3 bg-amber-100 rounded"></span>
+                            ) : (
+                              <span>{Math.min(moodHistory.length * 10, 100)}%</span>
+                            )}
                           </div>
                           <div className="w-full bg-white/50 rounded-full h-2">
-                            <div
-                              className="bg-amber-500 h-2 rounded-full transition-all duration-500"
-                              style={{ width: `${Math.min(moodHistory.length * 10, 100)}%` }}
-                            />
+                            {isLoading ? (
+                              <div className="animate-pulse bg-amber-200 h-2 rounded-full w-1/2"></div>
+                            ) : (
+                              <div
+                                className="bg-amber-500 h-2 rounded-full transition-all duration-500"
+                                style={{ width: `${Math.min(moodHistory.length * 10, 100)}%` }}
+                              />
+                            )}
                           </div>
                         </div>
                         <div className="text-xs space-y-1">
-                          {moodHistory.slice(-3).map(entry => (
-                            <div key={entry.id} className="flex justify-between p-1.5 bg-white/50 rounded">
-                              <span>{new Date(entry.start_time).toLocaleDateString()}</span>
-                              <span className="font-medium capitalize">{entry.mood}</span>
+                          {isLoading ? (
+                            <div className="flex justify-center p-3">
+                              <div className="animate-pulse flex space-x-2">
+                                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                              </div>
                             </div>
-                          ))}
+                          ) : hasError ? (
+                            <div className="text-center p-2 text-red-500 text-xs">
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              Unable to load mood data
+                            </div>
+                          ) : moodHistory.length > 0 ? (
+                            moodHistory.slice(-3).map(entry => (
+                              <div key={entry.id} className="flex justify-between p-1.5 bg-white/50 rounded">
+                                <span>{new Date(entry.start_time).toLocaleDateString()}</span>
+                                <span className="font-medium capitalize">{entry.mood}</span>
+                              </div>
+                            ))
+                          ) : (
+                            <div className="text-center p-2 text-gray-500">
+                              No mood data yet
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
