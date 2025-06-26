@@ -4,6 +4,7 @@ import { UsageStats } from './UsageStats';
 import { UsageService, PLAN_LIMITS } from '../services/usageService';
 import type { UserSubscription } from '../types/subscription';
 import type { MoodHistoryItem } from '../services/moodService';
+import { MindfulnessLibrary } from './MindfulnessLibrary';
 
 interface RightSidebarProps {
   moodHistory: MoodHistoryItem[];
@@ -147,9 +148,9 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ moodHistory, selectedMood, 
         </div>
       )}
       {error && (
-        <div className="px-4 py-3 border-b">
-          <div className="flex items-center space-x-2 text-red-600">
-            <AlertCircle className="w-4 h-4" />
+        <div className="px-4 py-3 border-b text-red-600 bg-red-50">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-5 h-5" />
             <span className="text-sm">{error}</span>
           </div>
         </div>
@@ -159,14 +160,6 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ moodHistory, selectedMood, 
       {user && !isLoading && !loadingStats && !error && !hasError && (
         <div className="px-4 py-3 border-b">
           <UsageStats userId={user.id} />
-        </div>
-      )}
-      {error && (
-        <div className="px-4 py-3 border-b text-red-600 bg-red-50">
-          <div className="flex items-center gap-2">
-            <AlertCircle className="w-5 h-5" />
-            <span className="text-sm">{error}</span>
-          </div>
         </div>
       )}
 
@@ -239,6 +232,15 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ moodHistory, selectedMood, 
                           </div>
                         </div>
                       )}
+                    </div>
+                  )}
+
+                  {section.key === 'exercises' && (
+                    <div className="space-y-4">
+                      <div className="bg-white rounded-lg p-4 shadow-sm">
+                        <h3 className="text-sm font-semibold text-gray-800 mb-3">Mini Mindfulness Library</h3>
+                        <MindfulnessLibrary />
+                      </div>
                     </div>
                   )}
 
