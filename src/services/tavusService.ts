@@ -4,9 +4,11 @@ import { saveConversationSession } from './conversationSessionService';
 export interface TavusConversation {
   conversation_id: string;
   conversation_url: string;
-  status: 'idle' | 'connecting' | 'active' | 'paused' | 'ended';
+  status: 'idle' | 'connecting' | 'active' | 'paused' | 'ended' | 'error';
   persona_id: string;
   replica_id?: string;
+  session_id?: string;
+  participant_id?: string;
 }
 
 export interface TavusPersona {
@@ -15,6 +17,22 @@ export interface TavusPersona {
   system_prompt: string;
   default_replica_id: string;
   context?: string;
+}
+
+interface ConversationOptions {
+  webhook_events?: string[];
+  session_id?: string;
+  participant_id?: string;
+  max_duration_seconds?: number;
+  conversation_config?: {
+    enable_interruptions?: boolean;
+    enable_real_time_response?: boolean;
+    enable_custom_wake_word?: boolean;
+    wake_word?: string;
+  };
+  conversational_context?: string;
+  custom_greeting?: string;
+  properties?: Record<string, any>;
 }
 
 class TavusService {
@@ -29,38 +47,63 @@ class TavusService {
   private async makeRequest(endpoint: string, options: RequestInit = {}) {
     const url = `${this.baseUrl}${endpoint}`;
     
-    const response = await fetch(url, {
-      ...options,
-      headers: {
-        'x-api-key': this.apiKey,
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-    });
+    try {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'x-api-key': this.apiKey,
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+      });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Tavus API error: ${response.status} ${response.statusText}`, errorText);
-      throw new Error(`Tavus API error: ${response.status} ${response.statusText} - ${errorText}`);
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Tavus API error: ${response.status} ${response.statusText}`, errorText);
+        throw new Error(`Tavus API error: ${response.status} ${response.statusText} - ${errorText}`);
+      }
+
+      const data = await response.json();
+      return data.data || data;
+    } catch (error) {
+      console.error('Tavus API request failed:', error);
+      throw error;
     }
-
-    return response.json();
   }
 
-  async createConversation(personaId: string, replicaId?: string): Promise<TavusConversation> {
-    const payload = {
+  async createConversation(
+    personaId: string,
+    replicaId?: string,
+    options: ConversationOptions = {}
+  ): Promise<TavusConversation> {
+    // Build payload according to Tavus API docs
+    const payload: any = {
       persona_id: personaId,
-      replica_id: replicaId || undefined,
-      conversation_name: `AI Agent Session ${Date.now()}`,
-      callback_url: `${window.location.origin}/webhook/tavus`
+      conversation_name: `AI Agent Session ${new Date().toISOString()}`,
+      // Only include replica_id if provided
+      ...(replicaId ? { replica_id: replicaId } : {}),
+      // Only include callback_url if needed
+      callback_url: `${window.location.origin}/api/webhook/tavus`,
     };
-
-    const response = await this.makeRequest('/conversations', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    });
-
-    return response.data || response;
+    // Optionally add conversational_context, custom_greeting, properties if provided in options
+    if (options['conversational_context']) {
+      payload.conversational_context = options['conversational_context'];
+    }
+    if (options['custom_greeting']) {
+      payload.custom_greeting = options['custom_greeting'];
+    }
+    if (options['properties']) {
+      payload.properties = options['properties'];
+    }
+    try {
+      return await this.makeRequest('/v2/conversations', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+      });
+    } catch (error) {
+      console.error('Failed to create conversation:', error);
+      throw error;
+    }
   }
 
   async getConversation(conversationId: string): Promise<TavusConversation> {
@@ -159,6 +202,31 @@ class TavusService {
       duration,
       transcript,
     });
+  }
+
+  async getConversationStatus(conversationId: string): Promise<{
+    status: TavusConversation['status'];
+    metrics?: {
+      duration_seconds: number;
+      turn_count: number;
+      speaker_switches: number;
+    };
+  }> {
+    return this.makeRequest(`/v2/conversations/${conversationId}/status`);
+  }
+
+  async validatePersonaAndReplica(personaId: string, replicaId?: string): Promise<boolean> {
+    try {
+      const personas = await this.getPersonas();
+      const persona = personas.find(p => p.persona_id === personaId);
+      if (replicaId) {
+        const matchingPersona = personas.find(p => p.persona_id === personaId);
+        return !!persona && (!replicaId || matchingPersona?.default_replica_id === replicaId);
+      }
+      return !!persona;
+    } catch {
+      return false;
+    }
   }
 }
 

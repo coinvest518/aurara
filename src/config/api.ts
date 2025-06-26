@@ -1,12 +1,11 @@
-
 export const API_CONFIG = {
   tavus: {
     apiKey: import.meta.env.VITE_TAVUS_API_KEY || '',
-    baseUrl: 'https://tavusapi.com/v2',
+    baseUrl: 'https://tavusapi.com', // FIXED: removed /v2
     endpoints: {
-      conversations: '/conversations',
-      personas: '/personas',
-      replicas: '/replicas'
+      conversations: '/v2/conversations', // add /v2 here
+      personas: '/v2/personas',
+      replicas: '/v2/replicas'
     }
   },
   daily: {

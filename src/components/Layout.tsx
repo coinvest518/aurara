@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Brain, Settings } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Menu, Settings, Users, User, LogOut } from "lucide-react";
 import { supabase } from "../supabaseClient";
 import { useSubscription } from "../hooks/useSubscription";
 import CompanionCarousel from "./CompanionCarousel";
@@ -20,7 +20,7 @@ const SettingsModal: React.FC<{
           onClick={onClose}
           aria-label="Close settings"
         >
-          ×
+          
         </button>
         <h2 className="text-lg font-bold mb-4 text-slate-800">Settings</h2>
         {children}
@@ -30,10 +30,10 @@ const SettingsModal: React.FC<{
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const location = useLocation();
   const [showSettings, setShowSettings] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [showCompanions, setShowCompanions] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const { subscription } = useSubscription();
 
   useEffect(() => {
@@ -58,47 +58,112 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-[#f6efef] text-[#33292c] flex flex-col">
       {/* Header / Navigation */}
       <nav className="bg-white/80 shadow backdrop-blur-sm sticky top-0 z-50">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center space-x-3">
-            <Link to="/" className="relative h-10 w-10 block">
-              <div className="absolute inset-0 animate-pulse rounded-xl bg-accent-teal/20" />
-              <div className="relative flex h-full w-full items-center justify-center rounded-xl bg-accent-teal">
-                <Brain className="h-6 w-6 text-white" />
-              </div>
-            </Link>
-            <span className="text-xl font-semibold text-[#33292c]">Aurarora</span>
-          </div>
-          <div className="flex items-center space-x-6">
-            <Link to="/" className={`hover:underline font-medium ${location.pathname === '/' ? 'text-accent-teal' : ''}`}>Home</Link>
-            <Link to="/blog" className={`hover:underline font-medium ${location.pathname.startsWith('/blog') ? 'text-accent-teal' : ''}`}>Blog</Link>
-            <Link to="/pricing" className={`hover:underline font-medium ${location.pathname === '/pricing' ? 'text-accent-teal' : ''}`}>
-              Pricing
-            </Link>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16 items-center">
+            {/* Logo and Brand */}
+            <div className="flex items-center gap-3">
+              <img src="/assets/brand/logo.svg" alt="Aurarora Logo" className="h-10 w-auto" />
+            </div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden sm:flex items-center space-x-4">
+              {/* Home button: routes to /dashboard if logged in, / if not */}
+              <Link
+                to={user ? "/dashboard" : "/"}
+                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md font-semibold"
+              >
+                Home
+              </Link>
+              <Link
+                to="/blog"
+                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md"
+              >
+                Blog
+              </Link>
+              <Link
+                to="/pricing"
+                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md"
+              >
+                Pricing
+              </Link>
+              <button onClick={() => setShowCompanions(true)} className="p-2 rounded-full hover:bg-blue-50" title="Companions">
+                <Users className="w-5 h-5" />
+              </button>
+              <button onClick={() => setShowSettings(true)} className="p-2 rounded-full hover:bg-blue-50" title="Settings">
+                <Settings className="w-5 h-5" />
+              </button>
+              {user ? (
+                <div className="flex items-center gap-2 ml-2">
+                  <button className="p-2 rounded-full hover:bg-blue-50" title="Profile">
+                    <User className="w-5 h-5 text-blue-700" />
+                  </button>
+                  <span className="text-gray-700 font-medium">{user.email}</span>
+                  <button onClick={handleLogout} className="p-2 rounded-full hover:bg-red-50" title="Logout">
+                    <LogOut className="w-5 h-5 text-red-500" />
+                  </button>
+                </div>
+              ) : null}
+            </div>
+
+            {/* Mobile menu button */}
             <button
-              onClick={() => setShowCompanions(true)}
-              className="rounded-lg bg-accent-teal text-white px-4 py-2 font-semibold hover:bg-accent-teal/90 transition"
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="sm:hidden p-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100"
             >
-              View Companions
+              <Menu className="h-6 w-6" />
             </button>
-            {user && (
-              <>
-                <button
-                  onClick={() => setShowSettings(true)}
-                  className="relative h-8 w-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
-                >
-                  <Settings className="h-4 w-4 text-gray-600" />
-                </button>
-                {/* Logout button */}
-                <button
-                  onClick={handleLogout}
-                  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-                >
-                  Logout
-                </button>
-              </>
-            )}
           </div>
         </div>
+
+        {/* Mobile Navigation Menu */}
+        {showMobileMenu && (
+          <div className="sm:hidden bg-white border-t">
+            <div className="px-2 pt-2 pb-3 space-y-1">
+              {/* Home button: routes to /dashboard if logged in, / if not */}
+              <Link
+                to={user ? "/dashboard" : "/"}
+                className="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100 font-semibold"
+                onClick={() => setShowMobileMenu(false)}
+              >
+                Home
+              </Link>
+              <Link
+                to="/blog"
+                className="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                onClick={() => setShowMobileMenu(false)}
+              >
+                Blog
+              </Link>
+              <Link
+                to="/pricing"
+                className="block px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+                onClick={() => setShowMobileMenu(false)}
+              >
+                Pricing
+              </Link>
+              <button
+                onClick={() => { setShowCompanions(true); setShowMobileMenu(false); }}
+                className="flex items-center gap-2 w-full px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+              >
+                <Users className="w-5 h-5" />Companions
+              </button>
+              <button
+                onClick={() => { setShowSettings(true); setShowMobileMenu(false); }}
+                className="flex items-center gap-2 w-full px-3 py-2 rounded-md text-gray-700 hover:text-blue-600 hover:bg-gray-100"
+              >
+                <Settings className="w-5 h-5" />Settings
+              </button>
+              {user ? (
+                <button
+                  onClick={() => { handleLogout(); setShowMobileMenu(false); }}
+                  className="flex items-center gap-2 w-full px-3 py-2 rounded-md text-red-600 hover:bg-red-50"
+                >
+                  <LogOut className="w-5 h-5" />Logout
+                </button>
+              ) : null}
+            </div>
+          </div>
+        )}
       </nav>
 
       {/* Companions Modal */}
@@ -118,11 +183,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       )}
 
       {/* Main Content */}
-      <main className="flex-1">
+      <main className="flex-1 relative">
         {children}
       </main>
 
-      {/* Settings Modal */}      <SettingsModal open={showSettings} onClose={() => setShowSettings(false)}>
+      {/* Settings Modal */}
+      <SettingsModal open={showSettings} onClose={() => setShowSettings(false)}>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Account Settings</span>

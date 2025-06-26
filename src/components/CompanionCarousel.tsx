@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Heart, Star, Clock, Users } from "lucide-react";
 
-interface TherapyPersona {
+interface AICompanion {
   id: string;
   name: string;
   title: string;
@@ -18,75 +18,75 @@ interface TherapyPersona {
   availability: string;
 }
 
-const therapyPersonas: TherapyPersona[] = [
+const aiCompanions: AICompanion[] = [
   {
     id: "1",
     name: "Charlie",
-    title: "Licensed Clinical Psychologist",
-    specialty: "Anxiety & Depression",
-    experience: "8 years",
+    title: "Emotional Support Companion",
+    specialty: "Anxiety & Stress Relief",
+    experience: "Advanced AI",
     rating: 4.9,
     sessions: 1200,
     image: "/assets/avatars/charlie.png",
     description:
-      "Specializing in cognitive behavioral therapy with a warm, empathetic approach. I help clients develop practical coping strategies for anxiety and depression.",
-    approach: ["CBT", "Mindfulness", "Solution-Focused"],
+      "I'm here to listen, support, and help you navigate difficult emotions. Together, we can explore coping strategies for anxiety and stress in a judgment-free space.",
+    approach: ["Active Listening", "Mindfulness", "Problem-Solving"],
     availability: "24/7 Available",
   },
   {
     id: "2",
     name: "Sarah",
-    title: "Marriage & Family Therapist",
-    specialty: "Couples & Family Therapy",
-    experience: "12 years",
+    title: "Relationship Companion",
+    specialty: "Communication & Connection",
+    experience: "Advanced AI",
     rating: 4.8,
     sessions: 2100,
     image: "/assets/avatars/AI%20Interviewer.png",
     description:
-      "Helping couples and families build stronger relationships through evidence-based therapeutic techniques and compassionate guidance.",
-    approach: ["EFT", "Gottman Method", "Family Systems"],
+      "I specialize in helping you understand relationship dynamics and improve communication with loved ones. Let's chat about strengthening your connections with others.",
+    approach: ["Empathetic Reflection", "Practical Advice", "Supportive Guidance"],
     availability: "24/7 Available",
   },
   {
     id: "3",
     name: "Lovinka",
-    title: "Trauma Specialist",
-    specialty: "PTSD & Trauma Recovery",
-    experience: "10 years",
+    title: "Resilience Coach",
+    specialty: "Overcoming Challenges",
+    experience: "Advanced AI",
     rating: 4.9,
     sessions: 1800,
     image: "/assets/avatars/History%20Teacher.png",
     description:
-      "Specialized in trauma-informed care using EMDR and somatic approaches to help clients heal from traumatic experiences.",
-    approach: ["EMDR", "Somatic Therapy", "CPT"],
+      "I'm your companion for difficult times, helping you build resilience and find strength through life's challenges. Together, we'll work through tough situations.",
+    approach: ["Strength-Building", "Compassionate Support", "Growth Mindset"],
     availability: "24/7 Available",
   },
   {
     id: "4",
     name: "Danny",
-    title: "Addiction Counselor",
-    specialty: "Substance Abuse & Recovery",
-    experience: "15 years",
+    title: "Habit & Lifestyle Guide",
+    specialty: "Positive Change & Growth",
+    experience: "Advanced AI",
     rating: 4.7,
     sessions: 2500,
     image: "/assets/avatars/danny.png",
     description:
-      "Supporting individuals on their recovery journey with personalized treatment plans and ongoing support for lasting sobriety.",
-    approach: ["12-Step", "Motivational Interviewing", "Relapse Prevention"],
+      "I'm focused on supporting your journey toward positive habits and lifestyle changes. Let's work together to create sustainable improvements in your daily life.",
+    approach: ["Motivational Conversations", "Goal Setting", "Progress Tracking"],
     availability: "24/7 Available",
   },
   {
     id: "5",
     name: "Kiki",
-    title: "Child Psychologist",
-    specialty: "Child & Adolescent Therapy",
-    experience: "9 years",
+    title: "Youth & Family Companion",
+    specialty: "Fun & Supportive Guidance",
+    experience: "Advanced AI",
     rating: 4.8,
     sessions: 1400,
     image: "/assets/avatars/Kiki.png",
     description:
-      "Creating a safe, playful environment where children and teens can express themselves and develop healthy coping skills.",
-    approach: ["Play Therapy", "Art Therapy", "CBT for Kids"],
+      "I'm a friendly companion for younger users and families, creating a positive space for expression, learning emotional skills, and having meaningful conversations.",
+    approach: ["Creative Expression", "Friendly Discussions", "Age-Appropriate Support"],
     availability: "24/7 Available",
   },
 ];
@@ -96,7 +96,7 @@ interface CompanionCarouselProps {
 }
 
 export default function CompanionCarousel({ onClose }: CompanionCarouselProps) {
-  const [selectedPersona, setSelectedPersona] = useState<TherapyPersona | null>(null);
+  const [selectedPersona, setSelectedPersona] = useState<AICompanion | null>(null);
 
   return (
     <div className="w-full py-8">
@@ -110,13 +110,13 @@ export default function CompanionCarousel({ onClose }: CompanionCarouselProps) {
         <X className="w-5 h-5" />
       </button>
       <div className="mb-8 text-center">
-        <h2 className="text-3xl font-bold mb-2">Choose Your Therapy Specialist</h2>
-        <p className="text-muted-foreground">Find the right therapist for your unique needs</p>
+        <h2 className="text-3xl font-bold mb-2">Choose Your AI Companion</h2>
+        <p className="text-muted-foreground">Find the perfect AI friend for your emotional support needs</p>
       </div>
       {/* Horizontal Scrolling Carousel */}
       <div className="relative">
         <div className="flex gap-6 overflow-x-auto pb-4 px-4 scrollbar-hide">
-          {therapyPersonas.map((persona, index) => (
+          {aiCompanions.map((persona, index) => (
             <motion.div
               key={persona.id}
               initial={{ opacity: 0, y: 20 }}
@@ -149,18 +149,17 @@ export default function CompanionCarousel({ onClose }: CompanionCarouselProps) {
                       {persona.specialty}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                    <div className="flex items-center">
-                      <Clock className="w-4 h-4 mr-1" />
-                      {persona.experience}
-                    </div>
-                    <div className="flex items-center">
-                      <Users className="w-4 h-4 mr-1" />
-                      {persona.sessions}+ sessions
-                    </div>
+                  <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">                      <div className="flex items-center">
+                        <Clock className="w-4 h-4 mr-1" />
+                        {persona.experience}
+                      </div>
+                      <div className="flex items-center">
+                        <Users className="w-4 h-4 mr-1" />
+                        {persona.sessions}+ chats
+                      </div>
                   </div>
                   <div className="flex items-center justify-end">
-                    <button className="px-3 py-1 rounded bg-accent-teal text-white font-semibold hover:bg-accent-teal/90 text-xs">View Profile</button>
+                    <button className="px-3 py-1 rounded bg-accent-teal text-white font-semibold hover:bg-accent-teal/90 text-xs">Chat with Me</button>
                   </div>
                 </div>
               </div>
@@ -211,11 +210,11 @@ export default function CompanionCarousel({ onClose }: CompanionCarouselProps) {
                       </div>
                       <div className="flex items-center">
                         <Users className="w-4 h-4 mr-1" />
-                        {selectedPersona.sessions}+ sessions
+                        {selectedPersona.sessions}+ chats
                       </div>
                       <div className="flex items-center">
                         <Clock className="w-4 h-4 mr-1" />
-                        {selectedPersona.experience} experience
+                        {selectedPersona.experience}
                       </div>
                     </div>
                   </div>
@@ -231,7 +230,7 @@ export default function CompanionCarousel({ onClose }: CompanionCarouselProps) {
                 </div>
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <h3 className="font-semibold mb-2">Therapeutic Approaches</h3>
+                    <h3 className="font-semibold mb-2">Conversation Approaches</h3>
                     <div className="flex flex-wrap gap-2">
                       {selectedPersona.approach.map((approach) => (
                         <span key={approach} className="inline-flex items-center px-2 py-1 rounded text-xs font-semibold bg-accent-teal/10 text-accent-teal border border-accent-teal/20">

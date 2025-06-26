@@ -93,6 +93,8 @@ export function useSubscription() {
           );
         case 'unlimited_chats':
           return currentUsage.textSessions < planLimits.monthlyTextSessions;
+        case 'sendMessage':
+          return currentUsage.textSessions < planLimits.monthlyTextSessions;
         default:
           return false;
       }
@@ -108,6 +110,9 @@ export function useSubscription() {
         return planLimits.hasAdvancedAnalytics;
       case 'priority_support':
         return planLimits.hasPrioritySupport;
+      case 'sendMessage':
+        return planLimits.hasUnlimitedChats || 
+               currentUsage.textSessions < planLimits.monthlyTextSessions;
       default:
         return false;
     }

@@ -80,7 +80,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
     <button
       onClick={handleStartClick}
       disabled={!isApiConfigured || isLoading}
-      className="group inline-flex items-center justify-center space-x-2 rounded-xl bg-accent-teal px-8 py-4 text-lg font-semibold text-primary transition-all hover:bg-accent-teal/90 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="group inline-flex items-center justify-center space-x-2 rounded-xl bg-accent-teal px-6 py-3 text-base font-semibold text-primary transition-all hover:bg-accent-teal/90 disabled:opacity-50 disabled:cursor-not-allowed sm:px-8 sm:py-4 sm:text-lg"
     >
       {isLoading ? (
         <>
@@ -97,8 +97,26 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
   );
   return (
     <div className="min-h-screen bg-[#f6efef] text-[#33292c]">
+      {/* Product Hunt Badge */}
+      <div className="flex justify-start p-4">
+        <a 
+          href="https://www.producthunt.com/products/aurarora?embed=true&utm_source=badge-featured&utm_medium=badge&utm_source=badge-aurarora" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="hover:opacity-90 transition-opacity"
+        >
+          <img 
+            src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=983293&theme=light&t=1750786050006" 
+            alt="Aurarora - Your AI Companion for Emotional Wellness | Product Hunt" 
+            style={{ width: '250px', height: '54px' }} 
+            width="250" 
+            height="54" 
+          />
+        </a>
+      </div>
+
       {/* Hero Section */}
-      <div className="relative overflow-hidden pt-16">
+      <div className="relative overflow-hidden pt-4">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="lg:grid lg:grid-cols-2 lg:gap-12">
             <motion.div
@@ -144,7 +162,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
                     </div>
                   </div>
                 </div>
-                <div className="mt-10 sm:mt-12">
+                <div className="mt-10 sm:mt-12 flex flex-col items-center gap-2">
                   <StartButton />
                 </div>
               </div>
@@ -197,7 +215,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
               Ready to Start Your Journey?
             </h2>
             <p className="mt-4 text-lg text-[#81635d]">
-              Join thousands of others who have found support, guidance, and clarity through Aurora.
+              Join thousands of others who have found support, guidance, and clarity through Aurarora.
             </p>
           </div>
           <div className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -225,15 +243,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
           </div>
         </div>
       </div>
-      {/* About Aurora Section */}
+      {/* About Aurarora Section */}
       <div className="bg-white py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-center rounded-2xl shadow-lg">
-          {/* Left: About Aurora */}
+          {/* Left: About Aurarora */}
           <div className="flex flex-col justify-center h-full">
-            <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm mb-2">About Aurora</span>
-            <h2 className="text-3xl font-bold text-[#33292c] mb-4">Discover How Aurora Can Help You</h2>
+            <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm mb-2">About Aurarora</span>
+            <h2 className="text-3xl font-bold text-[#33292c] mb-4">Discover How Aurarora Can Help You</h2>
             <p className="text-base text-[#81635d] mb-4">
-              Aurora is your AI companion, blending emotional intelligence with evidence-based therapeutic techniques. Inspired by leading research from Harvard, Stanford, and USC’s SimSensei, Aurora adapts to your needs, offering a safe, supportive space for growth and healing.
+              Aurarora is your AI companion, blending emotional intelligence with evidence-based therapeutic techniques. Inspired by leading research from Harvard, Stanford, and USC’s SimSensei, Aurarora adapts to your needs, offering a safe, supportive space for growth and healing.
             </p>
             <ul className="space-y-2 text-[#33292c] mb-6">
               <li><span className="font-semibold text-accent-teal">Mission:</span> To empower users with accessible, empathetic, and effective mental health support, anytime, anywhere.</li>
@@ -259,7 +277,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
           </div>
           {/* Right: Illustration */}
           <div className="flex justify-center items-center h-full">
-            <img src="/assets/avatars/charlie.png" alt="Aurora About" className="rounded-2xl shadow-xl w-full max-w-md object-contain object-center" style={{height: '340px', background: '#f6efef'}} />
+            <img src="/assets/avatars/charlie.png" alt="Aurarora About" className="rounded-2xl shadow-xl w-full max-w-md object-contain object-center" style={{height: '340px', background: '#f6efef'}} />
           </div>
         </div>
         {/* Approach Features */}
@@ -289,14 +307,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
         </div>
       </div>
 
-      {/* Services Section - Aurora App Specific */}
+      {/* Services Section - Aurarora App Specific */}
       <div className="bg-accent-teal/5 py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm">How Aurora Helps</span>
+            <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm">How Aurarora Helps</span>
             <h2 className="mt-2 text-3xl font-bold text-slate-900">Your AI Bestie & Therapy Buddy</h2>
             <p className="mt-4 text-lg text-slate-700">
-              Aurora blends real psychology with a warm, human touch—offering daily support, emotional check-ins, and playful encouragement. It’s not just therapy, it’s a friendship that grows with you.
+              Aurarora blends real psychology with a warm, human touch—offering daily support, emotional check-ins, and playful encouragement. It’s not just therapy, it’s a friendship that grows with you.
             </p>
           </div>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -306,7 +324,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
               <span className="text-accent-teal font-bold text-2xl mb-2">01.</span>
               <h3 className="text-xl font-semibold text-slate-900 mb-2">AI Best Friend</h3>
               <p className="text-slate-600 mb-4 text-center">
-                Chat with Aurora like you would with a caring friend—get jokes, check-ins, and real emotional support that adapts to your mood and personality.
+                Chat with Aurarora like you would with a caring friend—get jokes, check-ins, and real emotional support that adapts to your mood and personality.
               </p>
               <button className="mt-auto px-6 py-2 rounded-lg bg-accent-teal text-white font-semibold hover:bg-accent-teal/90 transition">Start a Conversation</button>
             </div>
@@ -316,7 +334,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
               <span className="text-accent-teal font-bold text-2xl mb-2">02.</span>
               <h3 className="text-xl font-semibold text-slate-900 mb-2">Therapeutic Guidance</h3>
               <p className="text-slate-600 mb-4 text-center">
-                Aurora uses CBT, mindfulness, and DBT tools to help you manage stress, anxiety, and everyday overwhelm—always with empathy and science.
+                Aurarora uses CBT, mindfulness, and DBT tools to help you manage stress, anxiety, and everyday overwhelm—always with empathy and science.
               </p>
               <button className="mt-auto px-6 py-2 rounded-lg bg-accent-teal text-white font-semibold hover:bg-accent-teal/90 transition">Try a Check-In</button>
             </div>
@@ -326,7 +344,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
               <span className="text-accent-teal font-bold text-2xl mb-2">03.</span>
               <h3 className="text-xl font-semibold text-slate-900 mb-2">Emotional Growth</h3>
               <p className="text-slate-600 mb-4 text-center">
-                Track your moods, celebrate wins, and get personalized reminders. Aurora remembers your patterns and helps you build resilience, one day at a time.
+                Track your moods, celebrate wins, and get personalized reminders. Aurarora remembers your patterns and helps you build resilience, one day at a time.
               </p>
               <button className="mt-auto px-6 py-2 rounded-lg bg-accent-teal text-white font-semibold hover:bg-accent-teal/90 transition">See Your Progress</button>
             </div>
@@ -341,7 +359,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
           <div>
             <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm">Self-Discovery</span>
             <h2 className="mt-2 text-3xl font-bold text-slate-900">You Are the Main Puzzle</h2>
-            <p className="mt-4 text-lg text-slate-700">Building a relationship with yourself is the foundation of growth. Aurora helps you explore your emotions, track your mood, and celebrate your progress with real, actionable insights.</p>
+            <p className="mt-4 text-lg text-slate-700">Building a relationship with yourself is the foundation of growth. Aurarora helps you explore your emotions, track your mood, and celebrate your progress with real, actionable insights.</p>
             <div className="mt-8 flex gap-4">
               <img src="/assets/avatars/Rose.png" alt="Rose Persona" className="rounded-xl w-32 h-32 object-cover shadow" />
             </div>
@@ -351,14 +369,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
           </div>
           {/* Right: Video Module */}
           <div className="flex flex-col items-center">
-            <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm mb-2">Watch How Aurora Works</span>
+            <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm mb-2">Watch How Aurarora Works</span>
             <div className="w-full max-w-md rounded-2xl overflow-hidden shadow-xl bg-black">
               <video controls poster="/assets/Rose.png" className="w-full h-64 object-cover">
                 <source src="/assets/avatars/Aura1.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
-            <p className="mt-4 text-slate-700 text-center">See Aurora in action—AI-powered support, real conversations, and a safe space for your journey.</p>
+            <p className="mt-4 text-slate-700 text-center">See Aurarora in action—AI-powered support, real conversations, and a safe space for your journey.</p>
           </div>
         </div>
       </div>
@@ -369,25 +387,25 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
           <div className="text-center mb-12">
             <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm">Testimonials</span>
             <h2 className="mt-2 text-3xl font-bold text-slate-900">What Users Say</h2>
-            <p className="mt-4 text-lg text-slate-700">Real stories from people who found support, clarity, and growth with Aurora.</p>
+            <p className="mt-4 text-lg text-slate-700">Real stories from people who found support, clarity, and growth with Aurarora.</p>
           </div>
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {/* Testimonial 1 */}
             <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center p-8">
               <MessageCircle className="h-8 w-8 text-accent-teal mb-4" />
-              <p className="italic text-slate-700 mb-4 text-center">“Aurora helped me understand my emotions and gave me practical tools to manage my anxiety. I feel more in control and supported every day.”</p>
+              <p className="italic text-slate-700 mb-4 text-center">“Aurarora helped me understand my emotions and gave me practical tools to manage my anxiety. I feel more in control and supported every day.”</p>
               <span className="font-semibold text-slate-900">— Jamie, 28</span>
             </div>
             {/* Testimonial 2 */}
             <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center p-8">
               <Brain className="h-8 w-8 text-accent-teal mb-4" />
-              <p className="italic text-slate-700 mb-4 text-center">“The mood tracking and daily check-ins keep me motivated. Aurora feels like a real companion who listens and cares.”</p>
+              <p className="italic text-slate-700 mb-4 text-center">“The mood tracking and daily check-ins keep me motivated. Aurarora feels like a real companion who listens and cares.”</p>
               <span className="font-semibold text-slate-900">— Alex, 34</span>
             </div>
             {/* Testimonial 3 */}
             <div className="bg-white rounded-2xl shadow-lg flex flex-col items-center p-8">
               <Shield className="h-8 w-8 text-accent-teal mb-4" />
-              <p className="italic text-slate-700 mb-4 text-center">“I love the privacy and the gentle, non-judgmental approach. Aurora is always there when I need to talk.”</p>
+              <p className="italic text-slate-700 mb-4 text-center">“I love the privacy and the gentle, non-judgmental approach. Aurarora is always there when I need to talk.”</p>
               <span className="font-semibold text-slate-900">— Taylor, 41</span>
             </div>
           </div>
@@ -413,7 +431,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
           <div className="text-center mb-12">
             <span className="text-accent-teal font-semibold uppercase tracking-wider text-sm">Psychology Blog</span>
             <h2 className="mt-2 text-3xl font-bold text-slate-900">Insights & Resources</h2>
-            <p className="mt-4 text-lg text-slate-700">Explore articles on emotional health, self-care, and the science behind Aurora’s approach.</p>
+            <p className="mt-4 text-lg text-slate-700">Explore articles on emotional health, self-care, and the science behind Aurarora’s approach.</p>
           </div>
           <div className="grid gap-8 md:grid-cols-2">
             {/* Blog Article 1 */}
@@ -421,9 +439,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onStartChat, isApiConf
               <img src="/assets/avatars/blog.png" alt="Blog 1" className="w-full h-48 object-cover" />
               <div className="p-6 flex-1 flex flex-col">
                 <span className="text-xs text-accent-teal font-semibold mb-2">Self-Care</span>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Welcome to Aurora Blog</h3>
+                <h3 className="text-xl font-bold text-slate-900 mb-2">Welcome to Aurarora Blog</h3>
                 <span className="text-xs text-slate-400 mb-2">June 2025</span>
-                <p className="text-slate-700 mb-4 flex-1">This is our first post! Aurora is here to help you grow, reflect, and thrive every day.</p>
+                <p className="text-slate-700 mb-4 flex-1">This is our first post! Aurarora is here to help you grow, reflect, and thrive every day.</p>
                 <a href="/blog" className="text-accent-teal font-semibold hover:underline">Read More</a>
               </div>
             </div>

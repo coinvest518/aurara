@@ -37,20 +37,18 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ personas, selectedPersonaId, onSelectPersona, onStartConversation }) => (
-  <aside className="w-64 h-screen bg-white border-r shadow-lg flex flex-col fixed left-0 z-40
-    max-w-full sm:w-64 sm:static sm:h-auto sm:shadow-lg sm:flex sm:flex-col
-    w-full h-full sm:max-w-xs sm:w-64
-    hidden sm:flex
+  <aside className="w-full h-full bg-white border-r shadow-lg flex flex-col fixed left-0 z-40 sm:w-64 sm:static sm:h-auto
+    max-w-full sm:max-w-xs
     ">
     {/* Fixed header */}
-    <div className="p-6 font-bold text-xl text-blue-700 border-b shrink-0 text-center sm:text-left">
+    <div className="p-4 font-bold text-lg text-blue-700 border-b text-center sm:text-left sm:text-xl">
       Aurarora AI
     </div>
     {/* Start Conversation Button */}
     <div className="p-4">
       <button
         onClick={onStartConversation}
-        className="w-full px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors"
+        className="w-full px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         disabled={!selectedPersonaId}
       >
         Start Conversation

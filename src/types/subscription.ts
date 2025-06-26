@@ -22,7 +22,7 @@ export interface SubscriptionUsage {
   lastSessionDate?: string;
 }
 
-export type FeatureKey = 'video_session' | 'unlimited_chats' | 'advanced_analytics' | 'priority_support';
+export type FeatureKey = 'video_session' | 'unlimited_chats' | 'advanced_analytics' | 'priority_support' | 'sendMessage';
 
 export const PLAN_LIMITS: Record<UserSubscription['subscription_type'], UsageLimit> = {
   free: {

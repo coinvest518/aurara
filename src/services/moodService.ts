@@ -1,12 +1,20 @@
 import { supabase } from '../supabaseClient';
 
-export async function saveMoodToSession(sessionId: string, mood: string) {
+type MoodType = 'happy' | 'motivated' | 'stressed' | 'sad' | 'tired';
+
+export async function saveMoodToSession(sessionId: string, mood: MoodType) {
   const { data, error } = await supabase
     .from('conversation_sessions')
     .update({ mood })
     .eq('id', sessionId);
   if (error) throw error;
   return data;
+}
+
+export interface MoodHistoryItem {
+  id: string;
+  start_time: string;
+  mood: MoodType;
 }
 
 export async function getMoodHistory(userId: string) {
@@ -16,5 +24,5 @@ export async function getMoodHistory(userId: string) {
     .eq('user_id', userId)
     .order('start_time', { ascending: true });
   if (error) throw error;
-  return data;
+  return data as MoodHistoryItem[];
 }
