@@ -33,14 +33,22 @@ export default function RootRouter() {
   const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        setUser(session?.user ?? null);
+      })
+      .catch(error => {
+        console.error("Supabase auth error:", error);
+        // Continue with null user to avoid blocking the app
+        setUser(null);
+      });
+      
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
+    
     return () => {
-      listener.subscription.unsubscribe();
+      listener?.subscription?.unsubscribe();
     };
   }, []);
 

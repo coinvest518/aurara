@@ -25,14 +25,23 @@ const Dashboard: React.FC = () => {
   const [showToast, setShowToast] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        setUser(session?.user ?? null);
+      })
+      .catch(error => {
+        console.error("Supabase auth error in Dashboard:", error);
+        // Continue with null user
+        setUser(null);
+      });
 
     if (user) {
       getMoodHistory(user.id)
         .then((data) => setMoodHistory(data || []))
-        .catch(console.error);
+        .catch(error => {
+          console.error("Error fetching mood history:", error);
+          setMoodHistory([]);
+        });
     }
   }, [user]);
 
