@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Analytics } from "@vercel/analytics/react";
 import { LandingPage } from './components/landing/LandingPage';
 import { supabase } from './supabaseClient';
 
@@ -26,10 +27,13 @@ const MainApp: React.FC = () => {
   }, [navigate]);
 
   return (
-    <LandingPage 
-      onStartChat={async () => navigate('/dashboard')}
-      isApiConfigured={true} // We'll handle API configuration in the dashboard
-    />
+    <>
+      <LandingPage 
+        onStartChat={async () => navigate('/dashboard')}
+        isApiConfigured={true} // We'll handle API configuration in the dashboard
+      />
+      <Analytics />
+    </>
   );
 };
 
